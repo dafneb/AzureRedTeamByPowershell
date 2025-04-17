@@ -33,6 +33,10 @@ param (
 
 $timeStart = Get-Date
 
+Write-Output "***********************************************************"
+Write-Output "*********** Users at Entra Id *****************************"
+Write-Output "*********** Author: David Burel (@dafneb) *****************"
+
 Write-Verbose -Message "Checking requirements ..."
 
 # Check if PowerShell version is 5.1 or higher

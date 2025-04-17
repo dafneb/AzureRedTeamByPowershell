@@ -42,9 +42,19 @@ Install-Module -Name Microsoft.Graph -Scope CurrentUser -Repository PSGallery -F
 
 ### get-rolesassignment.ps1
 
-Results could be found at file: "./case/<domain>/<account>/rolesassignment.csv"
+This script will connect to Azure via Az PowerShell module. Then it will try to list all user's role assignment.
+
+Results could be found at file: "./case/$CaseName/$Identity/rolesassignment.csv"
 
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
@@ -54,17 +64,41 @@ Results could be found at file: "./case/<domain>/<account>/rolesassignment.csv"
 
 #### Changelog
 
+*Version: 1.0.0*
+
+- Initial version.
+
 ### get-visibleresources.ps1
 
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
 #### Changelog
 
+*Version: 1.0.0*
+
+- Initial version.
+
 ### get-virtualmachines.ps1
 
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
@@ -74,6 +108,14 @@ Results could be found at file: "./case/<domain>/<account>/rolesassignment.csv"
 
 #### Requirements
 
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
+
 #### Usage
 
 #### Changelog
@@ -81,6 +123,14 @@ Results could be found at file: "./case/<domain>/<account>/rolesassignment.csv"
 ### get-storageblob.ps1
 
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
