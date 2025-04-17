@@ -59,7 +59,7 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 #### Usage
 
 ```powershell
-./scripts/private/get-rolesassignment.ps1 -Domain "<domain>"
+./scripts/private/get-rolesassignment.ps1 -CaseName "<domain>"
 ```
 
 #### Changelog
@@ -69,6 +69,10 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 - Initial version.
 
 ### get-visibleresources.ps1
+
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible resources.
+
+Results could be found at file: "./case/$CaseName/$Identity/resources.csv"
 
 #### Requirements
 
@@ -81,6 +85,10 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 ```
 
 #### Usage
+
+```powershell
+./scripts/private/get-visibleresources.ps1 -CaseName "<domain>"
+```
 
 #### Changelog
 

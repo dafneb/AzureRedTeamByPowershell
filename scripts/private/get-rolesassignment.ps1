@@ -15,7 +15,7 @@
 
 .NOTES
     Ensure that the Microsoft Az PowerShell module is installed before running the script.
-    The script requires appropriate permissions to access user data in Microsoft Entra ID (Azure AD).
+    The script requires appropriate permissions to access resource data in Azure.
     The output is saved in a text file located in a domain-specific folder under the "case" directory.
 
     Author: David Burel (@dafneb)
@@ -39,7 +39,7 @@ Write-Output "*********** Author: David Burel (@dafneb) *****************"
 
 Write-Verbose -Message "Checking requirements ..."
 
-# Check if PowerShell version is 5.1 or higher
+# Check if PowerShell version is 7.4 or higher
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Verbose -Message "PowerShell version is lower than 7.4, actual version is $($PSVersionTable.PSVersion) ..."
     Write-Output -ForegroundColor Red "PowerShell version 7.4 or higher is required"
