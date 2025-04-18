@@ -1,4 +1,6 @@
-# Red Team Toolings - Entra ID & Azure
+# Red Team Toolings - M365 & Entra ID & Azure via PowerShell
+
+This repository contains a set of PowerShell scripts to help red teamers and pentesters to enumerate and test Microsoft 365, Entra ID and Azure environments.
 
 ## Scripts organization
 
@@ -13,11 +15,11 @@ This script will connect to Entra ID via Microsoft Graph. Then it will try to li
 
 It will also try to read *custom security attributes*.
 
-Results could be found at file: "./case/<domain>/entrausers.txt"
+Results could be found at file: "./case/$CaseName/entrausers.txt"
 
 #### Requirements
 
-This script require *Microsoft.Graph* PowerShell module.
+This script requires *Microsoft.Graph* PowerShell module.
 
 To install the *Microsoft.Graph* PowerShell module, run the following command:
 
@@ -28,56 +30,155 @@ Install-Module -Name Microsoft.Graph -Scope CurrentUser -Repository PSGallery -F
 #### Usage
 
 ```powershell
-./scripts/private/get-entrausers.ps1 -Domain "<domain>"
+./scripts/private/get-entrausers.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
 
+*Version: 1.0.0*
+
+- Initial version.
+- Added support to read *custom security attributes*.
+
 ### get-rolesassignment.ps1
 
-Results could be found at file: "./case/<domain>/<account>/rolesassignment.csv"
+This script will connect to Azure via Az PowerShell module. Then it will try to list all user's role assignment.
+
+Results could be found at file: "./case/$CaseName/$Identity/rolesassignment.csv"
 
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
 ```powershell
-./scripts/private/get-rolesassignment.ps1 -Domain "<domain>"
+./scripts/private/get-rolesassignment.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
 
+*Version: 1.0.0*
+
+- Initial version.
+
 ### get-visibleresources.ps1
+
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible resources.
+
+Results could be found at file: "./case/$CaseName/$Identity/resources.csv"
 
 #### Requirements
 
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
+
 #### Usage
 
+```powershell
+./scripts/private/get-visibleresources.ps1 -CaseName "<case>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### get-virtualmachines.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible virtual machines.
+
+Results could be found at file: "./case/$CaseName/$Identity/virtualmachines.csv"
+
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
+```powershell
+./scripts/private/get-virtualmachines.ps1 -CaseName "<case>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### get-storageaccounts.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible storage accounts, containers and blobs.
+
+Results could be found at file: "./case/$CaseName/$Identity/storageaccounts.txt"
+
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
+```powershell
+./scripts/private/get-storageaccounts.ps1 -CaseName "<case>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### get-storageblob.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to download a blob from a storage account.
+
+Results could be found at file: "./case/$CaseName/blobs/$Blob"
+
 #### Requirements
+
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
+```powershell
+./scripts/private/get-storageblob.ps1 -CaseName "<case>" -StorageAccount "<storage-account>" -Container "<container-name>" -Blob "<blob-name>" [-VersionId "<version-id>"]
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ## Scripts at "public" folder
 
