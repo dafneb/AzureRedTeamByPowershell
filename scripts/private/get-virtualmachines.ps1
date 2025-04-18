@@ -154,7 +154,7 @@ $virtualMachines | ForEach-Object {
         $dataVMs += "$($userData)"
     }
 }
-$dataVMs | ForEach-Object { Add-Content -Path $logFile -Value $_ }
+$dataVMs | ForEach-Object { Add-Content -Path $logFilePath -Value $_ }
 
 # Close connection
 Disconnect-AzAccount | Out-Null
