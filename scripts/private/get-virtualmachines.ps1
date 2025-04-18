@@ -16,7 +16,7 @@
 .NOTES
     Ensure that the Microsoft Az PowerShell module is installed before running the script.
     The script requires appropriate permissions to access resource data in Azure.
-    The output is saved in a text file located in a domain-specific folder under the "case" directory.
+    The output is saved in a text file located in a case-specific folder under the "case" directory.
 
     Author: David Burel (@dafneb)
     Date: April 18, 2025
