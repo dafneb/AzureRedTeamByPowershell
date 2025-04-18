@@ -98,6 +98,10 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 ### get-virtualmachines.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible virtual machines.
+
+Results could be found at file: "./case/$CaseName/$Identity/virtualmachines.csv"
+
 #### Requirements
 
 This script requires *Az* PowerShell module.
@@ -110,7 +114,15 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 #### Usage
 
+```powershell
+./scripts/private/get-virtualmachines.ps1 -CaseName "<domain>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### get-storageaccounts.ps1
 
