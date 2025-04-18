@@ -30,7 +30,7 @@ Install-Module -Name Microsoft.Graph -Scope CurrentUser -Repository PSGallery -F
 #### Usage
 
 ```powershell
-./scripts/private/get-entrausers.ps1 -CaseName "<domain>"
+./scripts/private/get-entrausers.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
@@ -59,7 +59,7 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 #### Usage
 
 ```powershell
-./scripts/private/get-rolesassignment.ps1 -CaseName "<domain>"
+./scripts/private/get-rolesassignment.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
@@ -87,7 +87,7 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 #### Usage
 
 ```powershell
-./scripts/private/get-visibleresources.ps1 -CaseName "<domain>"
+./scripts/private/get-visibleresources.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
@@ -115,7 +115,7 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 #### Usage
 
 ```powershell
-./scripts/private/get-virtualmachines.ps1 -CaseName "<domain>"
+./scripts/private/get-virtualmachines.ps1 -CaseName "<case>"
 ```
 
 #### Changelog
@@ -126,6 +126,10 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 ### get-storageaccounts.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible storage accounts, containers and blobs.
+
+Results could be found at file: "./case/$CaseName/$Identity/storageaccounts.txt"
+
 #### Requirements
 
 This script requires *Az* PowerShell module.
@@ -138,10 +142,22 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 #### Usage
 
+```powershell
+./scripts/private/get-storageaccounts.ps1 -CaseName "<case>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### get-storageblob.ps1
 
+This script will connect to Azure via Az PowerShell module. Then it will try to download a blob from a storage account.
+
+Results could be found at file: "./case/$CaseName/blobs/$Blob"
+
 #### Requirements
 
 This script requires *Az* PowerShell module.
@@ -154,7 +170,15 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 #### Usage
 
+```powershell
+./scripts/private/get-storageblob.ps1 -CaseName "<case>" -StorageAccount "<storage-account>" -Container "<container-name>" -Blob "<blob-name>" [-VersionId "<version-id>"]
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ## Scripts at "public" folder
 
