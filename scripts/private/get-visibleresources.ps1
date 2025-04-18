@@ -35,6 +35,7 @@ $timeStart = Get-Date
 Write-Output "***********************************************************"
 Write-Output "*********** Visible Resources *****************************"
 Write-Output "*********** Author: David Burel (@dafneb) *****************"
+Write-Output "***********************************************************"
 
 Write-Verbose -Message "Checking requirements ..."
 
