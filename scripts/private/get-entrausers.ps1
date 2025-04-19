@@ -43,14 +43,14 @@ Write-Verbose -Message "Checking requirements ..."
 # Check if PowerShell version is 7.4 or higher
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Verbose -Message "PowerShell version is lower than 7.4, actual version is $($PSVersionTable.PSVersion) ..."
-    Write-Output -ForegroundColor Red "PowerShell version 7.4 or higher is required"
+    Write-Error -Message "PowerShell version 7.4 or higher is required" -Category NotInstalled
     exit
 }
 
 # Check if module is already installed
 if (-not (Get-Module -Name Microsoft.Graph -ListAvailable)) {
     Write-Verbose -Message "Microsoft.Graph module not found ..."
-    Write-Output -ForegroundColor Red "Microsoft.Graph module not found, please install it first"
+    Write-Error -Message "Microsoft.Graph module not found, please install it first" -Category NotInstalled
     exit
 }
 
@@ -100,7 +100,7 @@ Connect-MgGraph -NoWelcome
 # Check if the connection was successful
 if ($null -eq (Get-MgUser)) {
     Write-Verbose -Message "Connection to Microsoft Graph failed!"
-    Write-Output -ForegroundColor Red "Failed to connect to Microsoft Graph. Please check your credentials and permissions."
+    Write-Error -Message "Failed to connect to Microsoft Graph. Please check your credentials and permissions." -Category ConnectionError
     exit
 }
 

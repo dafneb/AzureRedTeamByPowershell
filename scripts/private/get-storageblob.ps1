@@ -75,14 +75,14 @@ Write-Verbose -Message "Checking requirements ..."
 # Check if PowerShell version is 7.4 or higher
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Verbose -Message "PowerShell version is lower than 7.4, actual version is $($PSVersionTable.PSVersion) ..."
-    Write-Output -ForegroundColor Red "PowerShell version 7.4 or higher is required"
+    Write-Error -Message "PowerShell version 7.4 or higher is required" -Category NotInstalled
     exit
 }
 
 # Check if module is already installed
 if (-not (Get-Module -Name Az -ListAvailable)) {
     Write-Verbose -Message "Az module not found ..."
-    Write-Output -ForegroundColor Red "Az module not found, please install it first"
+    Write-Error -Message "Az module not found, please install it first" -Category NotInstalled
     exit
 }
 
@@ -130,7 +130,7 @@ Connect-AzAccount
 $azContext = Get-AzContext
 if ($null -eq $azContext) {
     Write-Verbose -Message "Failed to connect to Azure ..."
-    Write-Output -ForegroundColor Red "Failed to connect to Azure. Please check your credentials and permissions."
+    Write-Error -Message "Failed to connect to Azure. Please check your credentials and permissions." -Category ConnectionError
     exit
 }
 
@@ -146,7 +146,7 @@ switch($PSCmdlet.ParameterSetName) {
         $blobik = Get-AzStorageBlob -Container $Container -Context $Context -Blob $Blob
 
         if ($null -eq $blobik) {
-            Write-Output -ForegroundColor Red "Blob not found. Please check the blob name and container."
+            Write-Error -Message "Blob not found. Please check the blob name and container." -Category ObjectNotFound
             exit
         }
 
@@ -157,7 +157,7 @@ switch($PSCmdlet.ParameterSetName) {
         if (Test-Path -Path $blobPath) {
             Write-Output "Blob downloaded successfully to $blobPath"
         } else {
-            Write-Output -ForegroundColor Red "Failed to download the blob."
+            Write-Error -Message "Failed to download the blob."
         }
     }
 
@@ -169,7 +169,7 @@ switch($PSCmdlet.ParameterSetName) {
         $blobik = Get-AzStorageBlob -Container $Container -Context $Context -Blob $Blob -VersionId $VersionId
 
         if ($null -eq $blobik) {
-            Write-Output -ForegroundColor Red "Blob not found. Please check the blob name, version id and container."
+            Write-Error -Message "Blob not found. Please check the blob name, version id and container." -Category ObjectNotFound
             exit
         }
 
@@ -180,7 +180,7 @@ switch($PSCmdlet.ParameterSetName) {
         if (Test-Path -Path $blobPath) {
             Write-Output "Blob downloaded successfully to $blobPath"
         } else {
-            Write-Output -ForegroundColor Red "Failed to download the blob."
+            Write-Error -Message "Failed to download the blob."
         }
     }
 }
