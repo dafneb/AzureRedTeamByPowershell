@@ -1,4 +1,27 @@
 <#
+.SYNOPSIS
+    This script checks the accessibility of websites and extracts information about Azure Storage Accounts.
+
+.DESCRIPTION
+    The script takes a list of websites either from the command line or from a file, checks their accessibility,
+    and extracts information about Azure Storage Accounts if available. The results are saved in a CSV file.
+
+.PARAMETER CaseName
+    The name of the case. This will be used to create a folder for storing results.
+
+.PARAMETER Uri
+    The list of website URIs to check. This parameter is used when the 'Uri' parameter set is selected.
+
+.PARAMETER FilePath
+    The path to a file containing a list of website URIs. This parameter is used when the 'File' parameter set is selected.
+
+.EXAMPLE
+    .\test-websites.ps1 -CaseName "example-case" -Uri "https://example.com", "https://another-example.com"
+    This command checks the accessibility of the specified websites and extracts information about Azure Storage Accounts.
+
+.EXAMPLE
+    .\test-websites.ps1 -CaseName "example-case" -FilePath "C:\path\to\websites.txt"
+    This command checks the accessibility of the websites listed in the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
     The output is saved in a text file located in a case-specific folder under the "case" directory.

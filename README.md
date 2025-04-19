@@ -184,11 +184,34 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 ### test-websites.ps1
 
+This script will test websites given as parameter $Uri or as content of file located at $FilePath.
+It will also try to read the content of the website and check if it contains any references to storage accounts or blob containers.
+
+Results could be found at file: "./case/$CaseName/storageaccounts.csv"
+
 #### Requirements
+
+This script requires PowerShell v7.4 or higher.
 
 #### Usage
 
+**This script will test websites given as parameter $Uri**
+
+```powershell
+./scripts/public/test-websites.ps1 -CaseName "<case>" -Uri "<website-uri>"
+```
+
+**This script will test websites given as content of file located at $FilePath**
+
+```powershell
+./scripts/public/test-websites.ps1 -CaseName "<case>" -FilePath "<path-to-file>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### xxx
 
