@@ -16,11 +16,11 @@
     The path to a file containing a list of website URIs. This parameter is used when the 'File' parameter set is selected.
 
 .EXAMPLE
-    .\test-websites.ps1 -CaseName "example-case" -Uri "https://example.com", "https://another-example.com"
+    ./test-websites.ps1 -CaseName "example-case" -Uri "https://example.com", "https://another-example.com"
     This command checks the accessibility of the specified websites and extracts information about Azure Storage Accounts.
 
 .EXAMPLE
-    .\test-websites.ps1 -CaseName "example-case" -FilePath "C:\path\to\websites.txt"
+    ./test-websites.ps1 -CaseName "example-case" -FilePath "/path/to/websites.txt"
     This command checks the accessibility of the websites listed in the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
@@ -116,7 +116,6 @@ switch ($PSCmdlet.ParameterSetName) {
         }
     }
 }
-Write-Verbose -Message "Websites to check: $($websites)"
 
 # Let's check the websites ....
 Write-Verbose -Message "Checking websites ..."
