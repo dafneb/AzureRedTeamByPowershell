@@ -258,13 +258,42 @@ Usable as input file could be results from [test-websites.ps1](#test-websitesps1
 
 - Initial version.
 
-### xxx
+### get-storageblob.ps1
+
+Script for downloading a blob from a storage account.
+It's downloading publicly accessible blobs.
+
+Results could be found at folder: "./case/$CaseName/$Endpoint/$Container[/$VersionId]/$Blob"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
+
 #### Usage
 
+**This script will download blob given as parameters**
+
+```powershell
+./scripts/public/get-storageblob.ps1 -CaseName "case" -StorageAccount "storage-account" -Container "container-name" -Blob "blob-name" [-VersionId "version-id"]
+```
+
+**This script will download blobs as content of file located at $FilePath**
+
+File has to be "comma-separated" values file.
+This should have at least 4 columns: *StorageAccount*, *Container*, *Blob* and *VersionId*.
+It's usable as batch downloading of blobs.
+The file should be in UTF-8 format.
+Usable as input file could be results from [test-storageaccounts.ps1](#test-storageaccountsps1).
+
+```powershell
+./scripts/public/get-storageblob.ps1 -CaseName "case" -FilePath "path-to-file"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### xxx
 
