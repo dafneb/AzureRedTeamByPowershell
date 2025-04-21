@@ -115,7 +115,7 @@ $users | ForEach-Object {
     Write-Verbose -Message "DisplayName: $($user.DisplayName)"
     $dataUsers += "ID: $($user.ID); DisplayName: $($user.DisplayName); UserPrincipalName: $($user.UserPrincipalName)"
 
-    $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | select * -ExpandProperty additionalProperties
+    $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | Select-Object * -ExpandProperty additionalProperties
     $userMemberOf | ForEach-Object {
         $group = $_
         $dataUsers += "`tGroup: $($group.DisplayName)"
