@@ -180,31 +180,136 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 - Initial version.
 
+### xxx
+
+#### Requirements
+
+#### Usage
+
+#### Changelog
+
+### xxx
+
+#### Requirements
+
+#### Usage
+
+#### Changelog
+
 ## Scripts at "public" folder
 
 ### test-websites.ps1
 
-#### Requirements
+This script will test websites given as parameter $Uri or as content of file located at $FilePath.
+It will also try to read the content of the website and check if it contains any references to storage accounts or blob containers.
 
-#### Usage
-
-#### Changelog
-
-### xxx
+Results could be found at file: "./case/$CaseName/storageaccounts.csv"
+Results could be used as input for the script [test-storageaccounts.ps1](#test-storageaccountsps1). 
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
+
 #### Usage
+
+**This script will test websites given as parameter $Uri**
+
+```powershell
+./scripts/public/test-websites.ps1 -CaseName "<case>" -Uri "<website-uri>"
+```
+
+**This script will test websites given as content of file located at $FilePath**
+
+Each line of the file will be treated as a website to test.
+The file should contain one website per line.
+It's usable as batch testing of websites.
+The file should be in UTF-8 format.
+
+```powershell
+./scripts/public/test-websites.ps1 -CaseName "<case>" -FilePath "<path-to-file>"
+```
 
 #### Changelog
 
-### xxx
+*Version: 1.0.0*
+
+- Initial version.
+
+### test-storageaccounts.ps1
+
+This script will test storage accounts given as parameters $StorageAccount and $Container or as content of file located at $FilePath.
+It will try to list all blobs in the container.
+
+Results could be found at file: "./case/$CaseName/blobs.csv"
+Partial results could be found at file: "./case/$CaseName/$Endpoint/$Container/blobs.xml"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
+
 #### Usage
 
+**This script will test storage account given as parameters**
+
+```powershell
+./scripts/public/test-storageaccounts.ps1 -CaseName "case" -StorageAccount "storage-account" -Container "container"
+```
+
+**This script will test storage accounts as content of file located at $FilePath**
+
+File has to be "comma-separated" values file.
+This should have at least 2 columns: *StorageAccount* and *Container*.
+The file should contain one storage account and container per line.
+It's usable as batch testing of storage accounts.
+The file should be in UTF-8 format.
+Usable as input file could be results from [test-websites.ps1](#test-websitesps1).
+
+```powershell
+./scripts/public/test-storageaccounts.ps1 -CaseName "case" -FilePath "path-to-file"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
+
+### get-storageblob.ps1
+
+Script for downloading a blob from a storage account.
+It's downloading publicly accessible blobs.
+
+Results could be found at folder: "./case/$CaseName/$Endpoint/$Container[/$VersionId]/$Blob"
+
+#### Requirements
+
+This script requires PowerShell v7.4 or higher.
+
+#### Usage
+
+**This script will download blob given as parameters**
+
+```powershell
+./scripts/public/get-storageblob.ps1 -CaseName "case" -StorageAccount "storage-account" -Container "container-name" -Blob "blob-name" [-VersionId "version-id"]
+```
+
+**This script will download blobs as content of file located at $FilePath**
+
+File has to be "comma-separated" values file.
+This should have at least 4 columns: *StorageAccount*, *Container*, *Blob* and *VersionId*.
+It's usable as batch downloading of blobs.
+The file should be in UTF-8 format.
+Usable as input file could be results from [test-storageaccounts.ps1](#test-storageaccountsps1).
+
+```powershell
+./scripts/public/get-storageblob.ps1 -CaseName "case" -FilePath "path-to-file"
+```
+
+#### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### xxx
 

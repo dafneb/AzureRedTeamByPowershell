@@ -98,7 +98,7 @@ Write-Verbose -Message "Connecting to Microsoft Graph ..."
 
 Connect-MgGraph -NoWelcome
 # Check if the connection was successful
-if ($null -eq (Get-MgUser)) {
+if ($null -eq (Get-MgContext)) {
     Write-Verbose -Message "Connection to Microsoft Graph failed!"
     Write-Error -Message "Failed to connect to Microsoft Graph. Please check your credentials and permissions." -Category ConnectionError
     exit
@@ -114,6 +114,16 @@ $users | ForEach-Object {
     $user = $_
     Write-Verbose -Message "DisplayName: $($user.DisplayName)"
     $dataUsers += "ID: $($user.ID); DisplayName: $($user.DisplayName); UserPrincipalName: $($user.UserPrincipalName)"
+
+    $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | Select-Object * -ExpandProperty additionalProperties
+    $userMemberOf | ForEach-Object {
+        $group = $_
+        $dataUsers += "`tGroup: $($group.DisplayName)"
+        $dataUsers += "`t`tDisplayName: $($group.AdditionalProperties["displayName"])"
+        $dataUsers += "`t`tDescription: $($group.AdditionalProperties["description"])"
+        $dataUsers += "`t`tMail: $($group.AdditionalProperties["mail"])"
+        $dataUsers += "`t`tSecurityEnabled: $($group.AdditionalProperties["securityEnabled"])"
+    }
 
     # Retrieve the custom security attributes for the user
     $customAttributes = Get-MgUser -UserId $user.Id -Property "customSecurityAttributes"
