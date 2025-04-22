@@ -128,6 +128,7 @@ $dataStorage = @()
 $storages = Get-AzStorageAccount
 $storages | ForEach-Object {
     $storageItem = $_
+    Write-Verbose "Processing storage account: $($storageItem.StorageAccountName) ..."
     $storageContext = New-AzStorageContext -StorageAccountName $storageItem.StorageAccountName -UseConnectedAccount
     $dataStorage += "Name: $($storageItem.StorageAccountName); Location: $($storageItem.Location); SKU: $($storageItem.Sku.Name); Kind: $($storageItem.Kind); Status: $($storageItem.ProvisioningState)"
     $dataStorage += "`tAccessTier: $($storageItem.AccessTier)"

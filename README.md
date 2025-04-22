@@ -19,6 +19,7 @@ Results could be found at file: "./case/$CaseName/entrausers.txt"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Microsoft.Graph* PowerShell module.
 
 To install the *Microsoft.Graph* PowerShell module, run the following command:
@@ -48,6 +49,7 @@ Results could be found at file: "./case/$CaseName/$Identity/rolesassignment.csv"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Az* PowerShell module.
 
 To install the *Az* PowerShell module, run the following command:
@@ -76,6 +78,7 @@ Results could be found at file: "./case/$CaseName/$Identity/resources.csv"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Az* PowerShell module.
 
 To install the *Az* PowerShell module, run the following command:
@@ -104,6 +107,7 @@ Results could be found at file: "./case/$CaseName/$Identity/virtualmachines.csv"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Az* PowerShell module.
 
 To install the *Az* PowerShell module, run the following command:
@@ -132,6 +136,7 @@ Results could be found at file: "./case/$CaseName/$Identity/storageaccounts.txt"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Az* PowerShell module.
 
 To install the *Az* PowerShell module, run the following command:
@@ -160,6 +165,7 @@ Results could be found at file: "./case/$CaseName/blobs/$Blob"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
 This script requires *Az* PowerShell module.
 
 To install the *Az* PowerShell module, run the following command:
@@ -180,13 +186,34 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 - Initial version.
 
-### xxx
+### get-keyvaults.ps1
+
+This script will connect to Azure via Az PowerShell module. Then it will try to list all visible keyvaults.
+
+Results could be found at file: "./case/$CaseName/$Identity/keyvaults.txt"
 
 #### Requirements
 
+This script requires PowerShell v7.4 or higher.
+This script requires *Az* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
+
 #### Usage
 
+```powershell
+./scripts/private/get-keyvaults.ps1 -CaseName "<case>"
+```
+
 #### Changelog
+
+*Version: 1.0.0*
+
+- Initial version.
 
 ### xxx
 
