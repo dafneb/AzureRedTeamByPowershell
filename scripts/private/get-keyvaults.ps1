@@ -1,12 +1,36 @@
+<#
+.SYNOPSIS
+    This script retrieves detailed information about all Azure KeyVaults in the current subscription.
 
+.DESCRIPTION
+    The script connects to Azure, retrieves information about all KeyVaults in the current subscription,
+    and saves the details in a text file. It also exports the keys and certificates to separate files.
 
+    The script creates a folder structure based on the case name and account name to organize the output files.
+
+.PARAMETER CaseName
+    Specifies the case's name for which the user data will be retrieved. This parameter is mandatory.
+
+.EXAMPLE
+    .\get-keyvaults.ps1 -CaseName "contoso.com"
+    This command retrieves KeyVault information for the case named "MyCase".
+
+.NOTES
+    Ensure that the Microsoft Az PowerShell module is installed before running the script.
+    The script requires appropriate permissions to access resource data in Azure.
+    The output is saved in a text file located in a case-specific folder under the "case" directory.
+
+    Author: David Burel (@dafneb)
+    Date: April 23, 2025
+    Version: 1.0.0
+#>
 
 # Define the script's parameters
 [CmdletBinding(DefaultParameterSetName = "Default")]
 param (
     [Parameter(Mandatory = $true, ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name"
+    [string]$CaseName
 )
 
 $timeStart = Get-Date
@@ -157,7 +181,7 @@ $keyVaults | ForEach-Object {
         }
     }
     $dataKeyVaults += "`tSecrets:"
-    $keyVaultSecrets = Get-AzKeyVaultSecret -VaultName $keyVaultItem.VaultName
+    $keyVaultSecrets = Get-AzKeyVaultSecret -VaultName $keyVaultItem.VaultName -ErrorAction SilentlyContinue
     $keyVaultSecrets | ForEach-Object {
         $secretCommon = $_
         $secretValue = Get-AzKeyVaultSecret -VaultName $keyVaultItem.VaultName -Name $secretCommon.Name -AsPlainText
@@ -167,7 +191,7 @@ $keyVaults | ForEach-Object {
         $dataKeyVaults += "`t`t`tEnabled: $($secretCommon.Enabled)"
     }
     $dataKeyVaults += "`tKeys:"
-    $keyVaultKeys = Get-AzKeyVaultKey -VaultName $keyVaultItem.VaultName
+    $keyVaultKeys = Get-AzKeyVaultKey -VaultName $keyVaultItem.VaultName -ErrorAction SilentlyContinue
     $keyVaultKeys | ForEach-Object {
         $keyCommon = $_
         $dataKeyVaults += "`t`tName: $($keyCommon.Name)"
@@ -178,7 +202,7 @@ $keyVaults | ForEach-Object {
         Get-AzKeyVaultKey -VaultName $keyVaultItem.VaultName -Name $keyCommon.Name -OutputFile $keyFilePath
     }
     $dataKeyVaults += "`tCertificates:"
-    $keyVaultCertificates = Get-AzKeyVaultCertificate -VaultName $keyVaultItem.VaultName
+    $keyVaultCertificates = Get-AzKeyVaultCertificate -VaultName $keyVaultItem.VaultName -ErrorAction SilentlyContinue
     $keyVaultCertificates | ForEach-Object {
         $certCommon = $_
         $dataKeyVaults += "`t`tName: $($certCommon.Name)"
