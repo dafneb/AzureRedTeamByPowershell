@@ -41,26 +41,26 @@ param (
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name",
+    [string]$CaseName,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$StorageAccount = "storage-account",
+    [string]$StorageAccount,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$Container = "container-name",
+    [string]$Container,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$Blob = "blob-name",
+    [string]$Blob,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$VersionId = "version-id"
+    [string]$VersionId
 )
 
 $timeStart = Get-Date
@@ -124,6 +124,7 @@ if (-not (Test-Path -Path $blobFolderPath)) {
 
 # Connect to Azure
 Write-Verbose -Message "Connecting to Azure ..."
+Write-Verbose -Message "ParameterSetName: $($PSCmdlet.ParameterSetName)"
 
 Connect-AzAccount
 # Check if the connection was successful
@@ -139,11 +140,16 @@ Write-Verbose -Message "ParameterSetName: $($PSCmdlet.ParameterSetName)"
 
 switch($PSCmdlet.ParameterSetName) {
     'Blob' {
-        # Get blob context
-        $Context = New-AzStorageContext -StorageAccountName $StorageAccount -UseConnectedAccount
+        # Get storage account context
+        $storageContext = New-AzStorageContext -StorageAccountName $StorageAccount -UseConnectedAccount
+
+        if ($null -eq $storageContext) {
+            Write-Error -Message "Storage context not found. Please check the storage account name." -Category ObjectNotFound
+            exit
+        }
 
         # Get the blob's context from the specified container
-        $blobik = Get-AzStorageBlob -Container $Container -Context $Context -Blob $Blob
+        $blobik = Get-AzStorageBlob -Container $Container -Context $storageContext -Blob $Blob -ErrorAction SilentlyContinue
 
         if ($null -eq $blobik) {
             Write-Error -Message "Blob not found. Please check the blob name and container." -Category ObjectNotFound
@@ -162,11 +168,16 @@ switch($PSCmdlet.ParameterSetName) {
     }
 
     'VersionId' {
-        # Get blob context
-        $Context = New-AzStorageContext -StorageAccountName $StorageAccount -UseConnectedAccount
+        # Get storage account context
+        $storageContext = New-AzStorageContext -StorageAccountName $StorageAccount -UseConnectedAccount
+
+        if ($null -eq $storageContext) {
+            Write-Error -Message "Storage context not found. Please check the storage account name." -Category ObjectNotFound
+            exit
+        }
 
         # Get the blob's context from the specified container
-        $blobik = Get-AzStorageBlob -Container $Container -Context $Context -Blob $Blob -VersionId $VersionId
+        $blobik = Get-AzStorageBlob -Container $Container -Context $storageContext -Blob $Blob -VersionId $VersionId
 
         if ($null -eq $blobik) {
             Write-Error -Message "Blob not found. Please check the blob name, version id and container." -Category ObjectNotFound

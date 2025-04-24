@@ -28,7 +28,7 @@
 param (
     [Parameter(Mandatory = $true, ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name"
+    [string]$CaseName
 )
 
 $timeStart = Get-Date
@@ -130,6 +130,12 @@ $storages | ForEach-Object {
     $storageItem = $_
     Write-Verbose "Processing storage account: $($storageItem.StorageAccountName) ..."
     $storageContext = New-AzStorageContext -StorageAccountName $storageItem.StorageAccountName -UseConnectedAccount
+
+    if ($null -eq $storageContext) {
+        Write-Warning -Message "Storage context for $($storageItem.StorageAccountName) not found."
+        continue
+    }
+    
     $dataStorage += "Name: $($storageItem.StorageAccountName); Location: $($storageItem.Location); SKU: $($storageItem.Sku.Name); Kind: $($storageItem.Kind); Status: $($storageItem.ProvisioningState)"
     $dataStorage += "`tAccessTier: $($storageItem.AccessTier)"
     # Get storages's Tags
@@ -213,8 +219,8 @@ $storages | ForEach-Object {
     $dataStorage += "`t`t`t`tKerberosTicketEncryption: $($fileShareServiceProperties.ProtocolSettings.Smb.KerberosTicketEncryption | Out-String)"
     $dataStorage += "`t`t`t`tChannelEncryption: $($fileShareServiceProperties.ProtocolSettings.Smb.ChannelEncryption | Out-String)"
     # Get storage's Containers
-    $dataStorage += "`tStorageContainers:"
-    $containers = Get-AzStorageContainer -Context $storageContext
+    $dataStorage += "`tContainers:"
+    $containers = Get-AzStorageContainer -Context $storageContext -ErrorAction SilentlyContinue
     $containers | ForEach-Object {
         $containerItem = $_
         $dataStorage += "`t`tName: $($containerItem.Name)"
@@ -224,7 +230,7 @@ $storages | ForEach-Object {
         $dataStorage += "`t`t`tHasLegalHold: $($containerItem.HasLegalHold)"
         # Get container's Blobs
         $dataStorage += "`t`t`tBlobs:"
-        $blobs = Get-AzStorageBlob -Container $containerItem.Name -Context $storageContext -IncludeVersion
+        $blobs = Get-AzStorageBlob -Container $containerItem.Name -Context $storageContext -IncludeVersion -ErrorAction SilentlyContinue
         $blobs | ForEach-Object {
             $blobItem = $_
             $dataStorage += "`t`t`t`tName: $($blobItem.Name)"
@@ -235,8 +241,8 @@ $storages | ForEach-Object {
         }
     }
     # Get storage's File Shares
-    $dataStorage += "`tStorageShares:"
-    $shares = Get-AzStorageShare -Context $storageContext
+    $dataStorage += "`tShares:"
+    $shares = Get-AzStorageShare -Context $storageContext -ErrorAction SilentlyContinue
     $shares | ForEach-Object {
         $shareItem = $_
         $dataStorage += "`t`tName: $($shareItem.Name)"
@@ -244,7 +250,7 @@ $storages | ForEach-Object {
         $dataStorage += "`t`t`tQuota: $($shareItem.Quota)"
         # Get share's Files
         $dataStorage += "`t`t`tFiles:"
-        $files = Get-AzStorageFile -ShareName $shareItem.Name -Context $storageContext
+        $files = Get-AzStorageFile -ShareName $shareItem.Name -Context $storageContext -ErrorAction SilentlyContinue
         $files | ForEach-Object {
             $fileItem = $_
             $dataStorage += "`t`t`t`tName: $($fileItem.Name)"
@@ -253,8 +259,8 @@ $storages | ForEach-Object {
         }
     }
     # Get storage's Queues
-    $dataStorage += "`tStorageQueues:"
-    $queues = Get-AzStorageQueue -Context $storageContext
+    $dataStorage += "`tQueues:"
+    $queues = Get-AzStorageQueue -Context $storageContext -ErrorAction SilentlyContinue
     $queues | ForEach-Object {
         $queueItem = $_
         $dataStorage += "`t`tName: $($queueItem.Name)"
@@ -262,8 +268,8 @@ $storages | ForEach-Object {
         $dataStorage += "`t`t`tApproximateMessageCount: $($queueItem.ApproximateMessageCount)"
     }
     # Get storage's Tables
-    $dataStorage += "`tStorageTables:"
-    $tables = Get-AzStorageTable -Context $storageContext
+    $dataStorage += "`tTables:"
+    $tables = Get-AzStorageTable -Context $storageContext -ErrorAction SilentlyContinue
     $tables | ForEach-Object {
         $tableItem = $_
         $dataStorage += "`t`tName: $($tableItem.Name)"
