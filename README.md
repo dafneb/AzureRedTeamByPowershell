@@ -215,9 +215,29 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
 - Initial version.
 
-### xxx
+### get-storagetable.ps1
+
+It's not working at this [moment](https://github.com/paulomarquesc/AzureRmStorageTable/issues/76).
+
+After this issue is fixed, this script will be finished and tested on [Pwned Labs](https://pwnedlabs.io/labs/unlock-access-with-azure-key-vault)
 
 #### Requirements
+
+This script requires PowerShell v7.4 or higher.
+This script requires *Az* PowerShell module.
+This script requires *AzTable* PowerShell module.
+
+To install the *Az* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
+
+To install the *AzTable* PowerShell module, run the following command:
+
+```powershell
+Install-Module -Name AzTable -Scope CurrentUser -Repository PSGallery -Force
+```
 
 #### Usage
 
