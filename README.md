@@ -221,6 +221,12 @@ It's not working at this [moment](https://github.com/paulomarquesc/AzureRmStorag
 
 After this issue is fixed, this script will be finished and tested on [Pwned Labs](https://pwnedlabs.io/labs/unlock-access-with-azure-key-vault)
 
+Instead of this you can use Aure CLI
+
+```bash
+az storage entity query --table-name <table> --account-name <account> --output table --auth-mode login
+```
+
 #### Requirements
 
 This script requires PowerShell v7.4 or higher.
