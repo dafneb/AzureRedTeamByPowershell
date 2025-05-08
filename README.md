@@ -221,7 +221,7 @@ It's not working at this [moment](https://github.com/paulomarquesc/AzureRmStorag
 
 After this issue is fixed, this script will be finished and tested on [Pwned Labs](https://pwnedlabs.io/labs/unlock-access-with-azure-key-vault)
 
-Instead of this you can use Aure CLI
+Instead of this you can use Azure CLI
 
 ```bash
 az storage entity query --table-name <table> --account-name <account> --output table --auth-mode login
@@ -244,6 +244,30 @@ To install the *AzTable* PowerShell module, run the following command:
 ```powershell
 Install-Module -Name AzTable -Scope CurrentUser -Repository PSGallery -Force
 ```
+
+#### Usage
+
+#### Changelog
+
+### xxx
+
+#### Requirements
+
+#### Usage
+
+#### Changelog
+
+### xxx
+
+#### Requirements
+
+#### Usage
+
+#### Changelog
+
+### xxx
+
+#### Requirements
 
 #### Usage
 

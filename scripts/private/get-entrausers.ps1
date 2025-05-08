@@ -115,14 +115,23 @@ $users | ForEach-Object {
     Write-Verbose -Message "DisplayName: $($user.DisplayName)"
     $dataUsers += "ID: $($user.ID); DisplayName: $($user.DisplayName); UserPrincipalName: $($user.UserPrincipalName)"
 
+    # Retrieve the user's memberOf groups
     $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | Select-Object * -ExpandProperty additionalProperties
     $userMemberOf | ForEach-Object {
         $group = $_
-        $dataUsers += "`tGroup: $($group.DisplayName)"
+        $dataUsers += "`tGroup Membership: $($group.DisplayName)"
         $dataUsers += "`t`tDisplayName: $($group.AdditionalProperties["displayName"])"
         $dataUsers += "`t`tDescription: $($group.AdditionalProperties["description"])"
         $dataUsers += "`t`tMail: $($group.AdditionalProperties["mail"])"
         $dataUsers += "`t`tSecurityEnabled: $($group.AdditionalProperties["securityEnabled"])"
+    }
+
+    # Retrieve the user's assigned licenses
+    $licenses = Get-MgUserLicenseDetail -UserId $user.Id
+    $licenses | ForEach-Object {
+        $license = $_
+        $dataUsers += "`tLicense: $($license.SkuId)"
+        $dataUsers += "`t`tSkuPartNumber: $($license.SkuPartNumber)"
     }
 
     # Retrieve the custom security attributes for the user
