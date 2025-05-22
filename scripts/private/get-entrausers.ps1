@@ -3,7 +3,7 @@
     Retrieves all users and their custom security attributes from Microsoft Entra ID (Azure AD) and logs the information to a file.
 
 .DESCRIPTION
-    This script connects to Microsoft Graph, retrieves all users in the specified domain, and logs their details, including custom security attributes, to a text file. 
+    This script connects to Microsoft Graph, retrieves all users in the specified domain, and logs their details, including custom security attributes, to a text file.
     The script ensures that necessary folders and files are created before logging the data. It also verifies the presence of the Microsoft Graph module and handles connection errors.
 
 .PARAMETER CaseName
@@ -119,7 +119,7 @@ $users | ForEach-Object {
     $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | Select-Object * -ExpandProperty additionalProperties
     $userMemberOf | ForEach-Object {
         $group = $_
-        $dataUsers += "`tGroup Membership: $($group.DisplayName)"
+        $dataUsers += "`tGroup Membership:"
         $dataUsers += "`t`tDisplayName: $($group.AdditionalProperties["displayName"])"
         $dataUsers += "`t`tDescription: $($group.AdditionalProperties["description"])"
         $dataUsers += "`t`tMail: $($group.AdditionalProperties["mail"])"
