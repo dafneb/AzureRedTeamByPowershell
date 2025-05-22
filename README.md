@@ -1,5 +1,14 @@
 # Red Team Toolings - M365 & Entra ID & Azure via PowerShell
 
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/dafneb/.github/blob/main/.github/CODE_OF_CONDUCT.md)
+[![License](https://img.shields.io/badge/License-MIT-4baaaa.svg)](https://github.com/dafneb/.github/blob/main/LICENSE)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/dafneb/AzureRedTeamByPowershell)
+![GitHub contributors](https://img.shields.io/github/contributors/dafneb/AzureRedTeamByPowershell)
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/codeql.yml?label=CodeQL)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/powershell-analyzer.yml?label=PSScriptAnalyzer)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/dafneb/AzureRedTeamByPowershell/main.svg)](https://results.pre-commit.ci/latest/github/dafneb/AzureRedTeamByPowershell/main)
+
 This repository contains a set of PowerShell scripts to help red teamers and pentesters to enumerate and test Microsoft 365, Entra ID and Azure environments.
 
 ## Scripts organization
@@ -281,7 +290,7 @@ This script will test websites given as parameter $Uri or as content of file loc
 It will also try to read the content of the website and check if it contains any references to storage accounts or blob containers.
 
 Results could be found at file: "./case/$CaseName/storageaccounts.csv"
-Results could be used as input for the script [test-storageaccounts.ps1](#test-storageaccountsps1). 
+Results could be used as input for the script [test-storageaccounts.ps1](#test-storageaccountsps1).
 
 #### Requirements
 
