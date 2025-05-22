@@ -1,0 +1,35 @@
+name: "PowerShell Script Analyzer"
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'development'
+      - 'stable'
+      - 'release/v*'
+      - 'feature/*'
+      - 'issue/*'
+    paths-ignore:
+      - '.github/workflows/*'
+      - '**/*.md'
+      - '**/*.txt'
+  pull_request:
+    branches:
+      - 'main'
+      - 'stable'
+      - 'development'
+      - 'release/v*'
+
+permissions:
+  contents: read
+
+jobs:
+  analyzer:
+    name: Analyze PowerShell
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+    uses: dafneb/.github/.github/workflows/powershell-analyzer.yml@b8308b70a4edf47ee79e64f3afdb25dcb2c134df # v1.1.0
+    secrets: inherit
