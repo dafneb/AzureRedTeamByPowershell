@@ -132,11 +132,11 @@ $roles | ForEach-Object {
     Write-Verbose -Message "DisplayName: $($roleItem.DisplayName); RoleDefinitionName: $($roleItem.RoleDefinitionName)"
     # Display the role assignment details
     $dataRoles += [PSCustomObject]@{
-        RoleName = "$($roleItem.RoleDefinitionName)"; 
-        PrincipalName = "$($roleItem.DisplayName)"; 
-        PrincipalType = "$($roleItem.ObjectType)"; 
-        PrincipalId = "$($roleItem.ObjectId)"; 
-        Scope = "$($roleItem.Scope)" 
+        RoleName = "$($roleItem.RoleDefinitionName)";
+        PrincipalName = "$($roleItem.DisplayName)";
+        PrincipalType = "$($roleItem.ObjectType)";
+        PrincipalId = "$($roleItem.ObjectId)";
+        Scope = "$($roleItem.Scope)"
     }
 }
 # Export the role assignment details to a CSV file

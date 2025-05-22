@@ -141,7 +141,7 @@ $websites | ForEach-Object {
         continue
     }
 
-    # Check headers 
+    # Check headers
     Write-Verbose -Message "Headers:"
     $response.Headers.Keys | ForEach-Object {
         $key = $_
@@ -153,8 +153,8 @@ $websites | ForEach-Object {
     if ($response.StatusCode -eq 200) {
         # Check if the website contains any link to a blob storage
         # Pattern for all services under StorageAccount 'https://([0-9a-z]{3,24})\.(blob|web|dfs|file|queue|table)\.core\.windows\.net/([0-9a-z-_$]{3,63})/'
-        Write-Verbose -Message "Checking for regular expression against context:"    
-        Write-Verbose -Message "Pattern: (?<endpoint>https://(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/"    
+        Write-Verbose -Message "Checking for regular expression against context:"
+        Write-Verbose -Message "Pattern: (?<endpoint>https://(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/"
         $results = $response.Content | Select-String -Pattern '(?<endpoint>https://(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/' -AllMatches
         # We want to get unique matches
         $uniqueMatches = $results.Matches | Select-Object -Unique
@@ -165,10 +165,10 @@ $websites | ForEach-Object {
             Write-Verbose -Message "StorageAccount: $($_.Groups['storageacc'].Value)"
             Write-Verbose -Message "Container: $($_.Groups['container'].Value)"
             $dataStorages += [PSCustomObject]@{
-                Value = "$($_.Value)"; 
-                Endpoint = "$($_.Groups['endpoint'].Value)"; 
-                StorageAccount = "$($_.Groups['storageacc'].Value)"; 
-                Container = "$($_.Groups['container'].Value)" 
+                Value = "$($_.Value)";
+                Endpoint = "$($_.Groups['endpoint'].Value)";
+                StorageAccount = "$($_.Groups['storageacc'].Value)";
+                Container = "$($_.Groups['container'].Value)"
             }
         }
 

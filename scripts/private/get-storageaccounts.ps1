@@ -135,7 +135,7 @@ $storages | ForEach-Object {
         Write-Warning -Message "Storage context for $($storageItem.StorageAccountName) not found."
         continue
     }
-    
+
     $dataStorage += "Name: $($storageItem.StorageAccountName); Location: $($storageItem.Location); SKU: $($storageItem.Sku.Name); Kind: $($storageItem.Kind); Status: $($storageItem.ProvisioningState)"
     $dataStorage += "`tAccessTier: $($storageItem.AccessTier)"
     # Get storages's Tags

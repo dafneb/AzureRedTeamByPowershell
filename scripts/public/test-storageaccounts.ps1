@@ -174,7 +174,7 @@ $storages | ForEach-Object {
 
     # Get Account Information
     # /wo x-ms-version
-    $uriBuilderEndpoint.Path = "/" 
+    $uriBuilderEndpoint.Path = "/"
     $uriBuilderEndpoint.Query = "restype=account&comp=properties"
     $fileOutputPath = Join-Path -Path $storFolderPath -ChildPath "account-information.xml"
     Write-Verbose -Message "Get Account Information: $($uriBuilderEndpoint.Uri)"
@@ -193,7 +193,7 @@ $storages | ForEach-Object {
 
     # Get Blob Service Properties
     # /wo x-ms-version
-    $uriBuilderEndpoint.Path = "/" 
+    $uriBuilderEndpoint.Path = "/"
     $uriBuilderEndpoint.Query = "restype=service&comp=properties"
     $fileOutputPath = Join-Path -Path $storFolderPath -ChildPath "service-properties.xml"
     Write-Verbose -Message "Get Blob Service Properties: $($uriBuilderEndpoint.Uri)"
@@ -212,7 +212,7 @@ $storages | ForEach-Object {
 
     # List Containers
     # /wo x-ms-version
-    $uriBuilderEndpoint.Path = "/" 
+    $uriBuilderEndpoint.Path = "/"
     $uriBuilderEndpoint.Query = "comp=list"
     $fileOutputPath = Join-Path -Path $storFolderPath -ChildPath "containers.xml"
     Write-Verbose -Message "Listing containers: $($uriBuilderEndpoint.Uri)"

@@ -9,7 +9,7 @@
 .PARAMETER CaseName
     Specifies the case's name for which the user data will be retrieved. This parameter is mandatory.
 
-.EXAMPLE    
+.EXAMPLE
     .\get-virtualmachines.ps1 -CaseName "contoso.com"
     This example retrieves all virtual machines for the "contoso.com" domain and logs the information to a text file.
 

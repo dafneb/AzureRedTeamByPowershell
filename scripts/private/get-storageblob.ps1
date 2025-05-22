@@ -3,7 +3,7 @@
     Download a blob from Azure Storage Account
 
 .DESCRIPTION
-    This script connects to Azure, retrieves a specified blob from a given storage account and container, and saves it to a local directory. 
+    This script connects to Azure, retrieves a specified blob from a given storage account and container, and saves it to a local directory.
     The script supports downloading blobs by name or by version ID.
 
 .PARAMETER CaseName
