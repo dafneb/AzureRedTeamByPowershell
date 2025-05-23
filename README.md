@@ -16,6 +16,13 @@ This repository contains a set of PowerShell scripts to help red teamers and pen
 - ./scripts/private -> Scripts for usage when you have access to the target environment.
 - ./scripts/public -> Scripts for usage against the target environment without access (e.g. from the internet via service's endpoints).
 
+## Disclaimer
+
+Scripts are provided for educational purposes only. Use them at your own risk.
+The author is not responsible for any damage caused by the use of these scripts.
+Please ensure you have permission to test the target environment before
+using these scripts.
+
 ## Scripts at "private" folder
 
 ### get-entrausers.ps1
