@@ -5,8 +5,8 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/dafneb/AzureRedTeamByPowershell)
 ![GitHub contributors](https://img.shields.io/github/contributors/dafneb/AzureRedTeamByPowershell)
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/codeql.yml?label=CodeQL)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/powershell-analyzer.yml?label=PSScriptAnalyzer)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/codeql.yml?label=CodeQL)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/dafneb/AzureRedTeamByPowershell/main.svg)](https://results.pre-commit.ci/latest/github/dafneb/AzureRedTeamByPowershell/main)
 
 This repository contains a set of PowerShell scripts to help red teamers and pentesters to enumerate and test Microsoft 365, Entra ID and Azure environments.
