@@ -135,13 +135,14 @@ $users | ForEach-Object {
     $licenses = Get-MgUserLicenseDetail -UserId $user.Id
     if ($licenses.Count -eq 0) {
         $dataUsers += "`tNo licenses assigned."
+        $licenses | ForEach-Object {
+            $license = $_
+            $dataUsers += "`t`tLicense: $($license.SkuId)"
+            $dataUsers += "`t`t`tSkuPartNumber: $($license.SkuPartNumber)"
+        }
+
     } else {
         $dataUsers += "`tAssigned Licenses:"
-    }
-    $licenses | ForEach-Object {
-        $license = $_
-        $dataUsers += "`t`tLicense: $($license.SkuId)"
-        $dataUsers += "`t`t`tSkuPartNumber: $($license.SkuPartNumber)"
     }
 
     # Retrieve the custom security attributes for the user
