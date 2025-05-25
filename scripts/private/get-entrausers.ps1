@@ -108,12 +108,17 @@ Write-Verbose -Message "Getting data from Entra ID ..."
 
 # Get the list of all users in the organization
 [string[]]$dataUsers = @()
-$users = Get-MgUser -All
+$users = Get-MgUser -All -Property "id,displayName,userPrincipalName,userType,customSecurityAttributes,SignInActivity,createdDateTime,onPremisesSyncEnabled" | Select-Object -Property id,displayName,userPrincipalName,userType,customSecurityAttributes,SignInActivity,createdDateTime,onPremisesSyncEnabled
 # Loop through each user and retrieve their custom security attributes
 $users | ForEach-Object {
     $user = $_
-    Write-Verbose -Message "DisplayName: $($user.DisplayName)"
+    Write-Verbose -Message "Processing user: $($user.DisplayName)"
     $dataUsers += "ID: $($user.ID); DisplayName: $($user.DisplayName); UserPrincipalName: $($user.UserPrincipalName)"
+    $dataUsers += "`tUserType: $($user.UserType)"
+    $dataUsers += "`tCreatedDateTime: $($user.CreatedDateTime)"
+    $dataUsers += "`tOnPremisesSyncEnabled: $($user.OnPremisesSyncEnabled)"
+    $dataUsers += ($user.SignInActivity.LastSignInDateTime) ? "`tLast sign-in: $($user.SignInActivity.LastSignInDateTime)" : "`tLast sign-in: Not defined"
+    $dataUsers += ($user.SignInActivity.LastNonInteractiveSignInDateTime) ? "`tLast non-interactive sign-in: $($user.SignInActivity.LastNonInteractiveSignInDateTime)" : "`tLast non-interactive sign-in: Not defined"
 
     # Retrieve the user's memberOf groups
     $userMemberOf = Get-MgUserMemberOf -UserId $user.Id | Select-Object * -ExpandProperty additionalProperties
@@ -128,22 +133,27 @@ $users | ForEach-Object {
 
     # Retrieve the user's assigned licenses
     $licenses = Get-MgUserLicenseDetail -UserId $user.Id
+    if ($licenses.Count -eq 0) {
+        $dataUsers += "`tNo licenses assigned."
+    } else {
+        $dataUsers += "`tAssigned Licenses:"
+    }
     $licenses | ForEach-Object {
         $license = $_
-        $dataUsers += "`tLicense: $($license.SkuId)"
-        $dataUsers += "`t`tSkuPartNumber: $($license.SkuPartNumber)"
+        $dataUsers += "`t`tLicense: $($license.SkuId)"
+        $dataUsers += "`t`t`tSkuPartNumber: $($license.SkuPartNumber)"
     }
 
     # Retrieve the custom security attributes for the user
-    $customAttributes = Get-MgUser -UserId $user.Id -Property "customSecurityAttributes"
-    if ($customAttributes.CustomSecurityAttributes.AdditionalProperties.Count -gt 0) {
-        $customAttributes.CustomSecurityAttributes.AdditionalProperties.Keys | ForEach-Object {
+    if ($user.CustomSecurityAttributes.AdditionalProperties.Count -gt 0) {
+        $user.CustomSecurityAttributes.AdditionalProperties.Keys | ForEach-Object {
             $key = $_
             $value = $customAttributes.CustomSecurityAttributes.AdditionalProperties.$($key) | Out-String
             # Append the custom attribute to the user information
             $dataUsers += "`t$($key): $($value)"
         }
     }
+
 }
 
 Write-Verbose -Message "Saving data ..."
