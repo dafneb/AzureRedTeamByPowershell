@@ -1,24 +1,39 @@
 <#
 .SYNOPSIS
-    This script retrieves all visible resources in the Azure subscription and exports their details to a CSV file.
+    This script retrieves all visible resources in the Azure subscription
+    and exports their details to a CSV file.
 
 .DESCRIPTION
-    The script connects to Azure, retrieves all visible resources, and logs their details, including resource name, type, group name, location, ID, and tags, to a CSV file.
+    The script connects to Azure, retrieves all visible resources, and logs
+    their details, including resource name, type, group name, location, ID,
+    and tags, to a CSV file.
+
+    Script will try if connection to Azure is successful, and if not, it will
+    try to connect.
+
+    After that, it will try find all visible resources in all tenants and
+    subscriptions the user has access to, and will log the information to
+    a CSV file.
 
 .PARAMETER CaseName
-    Specifies the case's name for which the user data will be retrieved. This parameter is mandatory.
+    Specifies the case's name for which the user data will be retrieved.
+    This parameter is mandatory.
 
 .EXAMPLE
-    .\get-visibleresources.ps1 -CaseName "contoso.com"
-    This example retrieves all visible resources for the "contoso.com" case and logs the information to a CSV file.
+    .\get-visibleresources.ps1 -CaseName "MyCase"
+    This example retrieves all visible resources for the "MyCase"
+    case and logs the information to a CSV file.
 
 .NOTES
-    Ensure that the Microsoft Az PowerShell module is installed before running the script.
-    The script requires appropriate permissions to access resource data in Azure.
-    The output is saved in a CSV file located in a case-specific folder under the "case" directory.
+    Ensure that the Microsoft Az PowerShell module is installed before
+    running the script.
+    The script requires appropriate permissions to access resource data
+    in Azure.
+    The output is saved in a CSV file located in a case-specific folder
+    under the "case" directory.
 
     Author: David Burel (@dafneb)
-    Date: April 17, 2025
+    Date: June 15, 2025
     Version: 1.0.0
 #>
 
@@ -27,7 +42,7 @@
 param (
     [Parameter(Mandatory = $true, ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name"
+    [string]$CaseName
 )
 
 $timeStart = Get-Date
