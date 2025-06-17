@@ -114,7 +114,7 @@ $accountFolderName = $accountFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs (2/2)
 $accountFolderPath = Join-Path -Path $caseFolderPath -ChildPath "$($accountFolderName)"
 $logFilePath = Join-Path -Path $accountFolderPath -ChildPath "resources.csv"
-$domainFilePath = Join-Path -Path $accountFolderPath -ChildPath "domains.txt"
+$domainFilePath = Join-Path -Path $caseFolderPath -ChildPath "domains.txt"
 
 Write-Verbose -Message "Checking folders (2/2) ..."
 
@@ -131,6 +131,14 @@ if (-not (Test-Path -Path $logFilePath)) {
 } else {
     # Clear the log file if it already exists
     Clear-Content -Path $logFilePath
+}
+
+if (-not (Test-Path -Path $domainFilePath)) {
+    Write-Verbose -Message "File for domains does not exist, creating it..."
+    New-Item -ItemType File -Path $domainFilePath | Out-Null
+} else {
+    # Clear the domain file if it already exists
+    Clear-Content -Path $domainFilePath
 }
 
 Write-Verbose -Message "Getting data from Azure ..."
