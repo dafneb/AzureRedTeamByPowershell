@@ -20,7 +20,7 @@
     This parameter is mandatory.
 
 .EXAMPLE
-    .\get-visibleresources.ps1 -CaseName "MyCase"
+    ./get-visibleresources.ps1 -CaseName "MyCase"
     This example retrieves all visible resources for the "MyCase"
     case and logs the information to a CSV file.
 
@@ -33,8 +33,8 @@
     under the "case" directory.
 
     Author: David Burel (@dafneb)
-    Date: June 15, 2025
-    Version: 1.0.0
+    Date: June 16, 2025
+    Version: 1.1.0
 #>
 
 # Define the script's parameters
@@ -97,10 +97,6 @@ if (-not (Test-Path -Path $caseFolderPath)) {
     New-Item -ItemType Directory -Path $caseFolderPath | Out-Null
 }
 
-# Connect to Azure
-Write-Verbose -Message "Connecting to Azure ..."
-
-Connect-AzAccount
 # Check if the connection was successful
 $azContext = Get-AzContext
 if ($null -eq $azContext) {
@@ -118,6 +114,7 @@ $accountFolderName = $accountFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs (2/2)
 $accountFolderPath = Join-Path -Path $caseFolderPath -ChildPath "$($accountFolderName)"
 $logFilePath = Join-Path -Path $accountFolderPath -ChildPath "resources.csv"
+$domainFilePath = Join-Path -Path $accountFolderPath -ChildPath "domains.txt"
 
 Write-Verbose -Message "Checking folders (2/2) ..."
 
@@ -140,24 +137,64 @@ Write-Verbose -Message "Getting data from Azure ..."
 
 # Get list of all visible resources
 $dataResources = @()
-$resources = Get-AzResource -ApiVersion '2024-11-01'
-$resources | ForEach-Object {
-    $resource = $_
-    Write-Verbose -Message "Name: $($resource.Name); ResourceType: $($resource.ResourceType)"
-    $dataResources += [PSCustomObject]@{
-        ResourceName = "$($resource.Name)";
-        ResourceType = "$($resource.ResourceType)";
-        ResourceGroupName = "$($resource.ResourceGroupName)";
-        Location = "$($resource.Location)";
-        ResourceId = "$($resource.ResourceId)"
-        Tags = "$($resource.Tags | Out-String)"
+$dataDomains = @()
+
+$tenants = Get-AzTenant -ErrorAction SilentlyContinue
+if (-not $tenants) {
+    Write-Warning -Message "No tenants found, please check your connection"
+}
+$tenants | ForEach-Object {
+    $tenant = $_
+    Write-Output "Tenant ID: $($tenant.Id); Tenant Name: $($tenant.Name)"
+    $tenant.Domains | ForEach-Object {
+        $dataDomains += $_
+    }
+
+    # Get all subscriptions for the tenant
+    $subscriptions = Get-AzSubscription -TenantId $tenant.Id -ErrorAction SilentlyContinue
+    if (-not $subscriptions) {
+        Write-Warning -Message "No subscriptions found for tenant $($tenant.Name) ($($tenant.Id))"
+    }
+    $subscriptions | ForEach-Object {
+        $subscription = $_
+        Write-Output "Subscription ID: $($subscription.Id); Subscription Name: $($subscription.Name)"
+
+        # Skip if the subscription is disabled
+        if ($subscription.State -eq "Disabled") {
+            Write-Warning -Message "Subscription $($subscription.Name) ($($subscription.Id)) is Disabled, skipping ..."
+            return
+        }
+        Set-AzContext -SubscriptionId $subscription.Id -TenantId $tenant.Id | Out-Null
+        if (-not (Get-AzContext)) {
+            Write-Warning -Message "Failed to set context for subscription $($subscription.Name) ($($subscription.Id))"
+            return
+        }
+
+        $resources = Get-AzResource -ApiVersion '2024-11-01'
+        $resources | ForEach-Object {
+            $resource = $_
+            Write-Output "Name: $($resource.Name); ResourceType: $($resource.ResourceType)"
+            $dataResources += [PSCustomObject]@{
+                TenantId = "$($tenant.Id)";
+                TenantName = "$($tenant.Name)";
+                SubscriptionId = "$($subscription.Id)";
+                SubscriptionName = "$($subscription.Name)";
+                SubscriptionState = "$($subscription.State)";
+                ResourceId = "$($resource.Id)";
+                ResourceName = "$($resource.Name)";
+                ResourceType = "$($resource.ResourceType)";
+                ResourceGroupName = "$($resource.ResourceGroupName)";
+                Location = "$($resource.Location)";
+                Tags = "$($resource.Tags | Out-String)"
+            }
+        }
+
     }
 }
-# Export the resource details to a CSV file
-$dataResources | Export-Csv -Path $logFilePath -NoTypeInformation
 
-# Close connection
-Disconnect-AzAccount | Out-Null
+# Export the resource details to a CSV file
+$dataResources | Export-Csv -Path $logFilePath -NoTypeInformation -Encoding UTF8
+$dataDomains | Out-File -Path $domainFilePath -Encoding UTF8
 
 # Get actual date and time ...
 $timeEnd = Get-Date
