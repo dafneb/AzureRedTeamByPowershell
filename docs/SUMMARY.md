@@ -12,6 +12,7 @@
 * [Public](public/README.md)
   * [test-websites.ps1](public/test-websites.md)
   * [test-storageaccounts.ps1](public/test-storageaccounts.md)
+  * [get-storageblob.ps1](public/get-storageblob.md)
 
 ## Contribute
 
@@ -20,3 +21,7 @@
 ## Security
 
 * [Security Policy](https://github.com/dafneb/.github/blob/main/SECURITY.md)
+
+## Repository
+
+* [Repository](https://github.com/dafneb/AzureRedTeamByPowershell)
