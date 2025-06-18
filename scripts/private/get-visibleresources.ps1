@@ -181,7 +181,7 @@ $tenants | ForEach-Object {
         $resources = Get-AzResource -ApiVersion '2024-11-01'
         $resources | ForEach-Object {
             $resource = $_
-            Write-Output "Name: $($resource.Name); ResourceType: $($resource.ResourceType)"
+            Write-Output "Resource Name: $($resource.Name); Resource Type: $($resource.ResourceType)"
             $dataResources += [PSCustomObject]@{
                 TenantId = "$($tenant.Id)";
                 TenantName = "$($tenant.Name)";
@@ -196,7 +196,6 @@ $tenants | ForEach-Object {
                 Tags = "$($resource.Tags | Out-String)"
             }
         }
-
     }
 }
 
