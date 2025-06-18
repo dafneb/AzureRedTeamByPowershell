@@ -31,8 +31,8 @@
     the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
-    The output is saved in a text file located in a case-specific folder under
-    the "case" directory.
+    The output is saved in a csv file located in a case-specific folder
+    under the "case" directory.
 
     Author: David Burel (@dafneb)
     Date: June 18, 2025
@@ -190,7 +190,7 @@ $websites | ForEach-Object {
 }
 
 # Export the storage account details to a CSV file
-Write-Verbose -Message "Saving data ..."
+Write-Output -Message "Saving data ..."
 $dataStorages | Export-Csv -Path $storFilePath -NoTypeInformation
 
 # Get actual date and time ...
