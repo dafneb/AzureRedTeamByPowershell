@@ -200,6 +200,7 @@ $tenants | ForEach-Object {
 }
 
 # Export the resource details to a CSV file
+Write-Output "Saving data ..."
 $dataResources | Export-Csv -Path $logFilePath -NoTypeInformation -Encoding UTF8
 $dataDomains | Out-File -Path $domainFilePath -Encoding UTF8
 

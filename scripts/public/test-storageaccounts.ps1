@@ -1,37 +1,47 @@
 <#
 .SYNOPSIS
-    This script checks the accessibility of Azure Storage Accounts and extracts information about them.
+    This script checks the accessibility of Azure Storage Accounts and extracts
+    information about them.
 
 .DESCRIPTION
-    The script takes a list of storage accounts either from the command line or from a file, checks their accessibility,
-    and extracts information about them. The results are saved in a CSV file.
+    The script takes a list of storage accounts either from the command line
+    or from a file, checks their accessibility, and extracts information about
+    them. The results are saved in a CSV file.
 
 .PARAMETER CaseName
-    The name of the case. This will be used to create a folder for storing results.
+    The name of the case. This will be used to create a folder for storing
+    results.
 
 .PARAMETER StorageAccount
-    The name of the Azure Storage Account to check. This parameter is used when the 'Account' parameter set is selected.
+    The name of the Azure Storage Account to check. This parameter is used
+    when the 'Account' parameter set is selected.
 
 .PARAMETER Container
-    The name of the Azure Storage Account container to check. This parameter is used when the 'Account' parameter set is selected.
+    The name of the Azure Storage Account container to check. This parameter
+    is used when the 'Account' parameter set is selected.
 
 .PARAMETER FilePath
-    The path to a file containing a list of storage accounts and containers. This parameter is used when the 'File' parameter set is selected.
+    The path to a file containing a list of storage accounts and containers.
+    This parameter is used when the 'File' parameter set is selected.
 
 .EXAMPLE
     ./test-storageaccounts.ps1 -CaseName "example-case" -StorageAccount "storage-account" -Container "container-name"
-    This command checks the accessibility of the specified storage account and container and extracts information about them.
+    This command checks the accessibility of the specified storage account
+    and container and extracts information about them.
 
 .EXAMPLE
     ./test-storageaccounts.ps1 -CaseName "example-case" -FilePath "/path/to/storageaccounts.csv"
-    This command checks the accessibility of the storage accounts and containers listed in the specified file and extracts information about them.
+    This command checks the accessibility of the storage accounts and
+    containers listed in the specified file and extracts information about
+    them.
 
 .NOTES
-    The output is saved in a csv file located in a case-specific folder under the "case" directory.
+    The output is saved in a csv file located in a case-specific folder
+    under the "case" directory.
 
     Author: David Burel (@dafneb)
-    Date: April 20, 2025
-    Version: 1.0.0
+    Date: June 18, 2025
+    Version: 1.0.1
 #>
 
 # Define the script's parameters
@@ -40,15 +50,15 @@ param (
     [Parameter(Mandatory = $true, ParameterSetName = 'Account')]
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name",
+    [string]$CaseName,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Account')]
     [ValidateNotNullOrEmpty()]
-    [string]$StorageAccount = "storage-account",
+    [string]$StorageAccount,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Account')]
     [ValidateNotNullOrEmpty()]
-    [string]$Container = "container-name",
+    [string]$Container,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
     [ValidateNotNullOrEmpty()]
@@ -79,7 +89,7 @@ $caseFolderName = $caseFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs and case folders
 $baseFolderPath = Join-Path -Path (Get-Location) -ChildPath "case"
 $caseFolderPath = Join-Path -Path $baseFolderPath -ChildPath "$($caseFolderName)"
-$blobFilePath = Join-Path -Path $caseFolderPath -ChildPath "blobs.csv"
+$blobFilePath = Join-Path -Path $caseFolderPath -ChildPath "pub-blobs.csv"
 
 Write-Verbose -Message "Checking folders ..."
 
@@ -157,13 +167,13 @@ $storages | ForEach-Object {
     $storageItem = $_
     Write-Verbose -Message "Processing storage account: $($storageItem)"
     $endpoint = "https://$($storageItem.StorageAccount).blob.core.windows.net/"
-    Write-Verbose -Message "Endpoint: $($endpoint)"
+    Write-Output "Endpoint: $($endpoint)"
     # URI builder for the blob storage
     try {
         $uriBuilderEndpoint = New-Object System.UriBuilder($endpoint)
     } catch {
         Write-Warning -Message "Error processing endpoint: $($endpoint)"
-        continue
+        return
     }
     $storFolderPath = Join-Path -Path $caseFolderPath -ChildPath $uriBuilderEndpoint.Host
     # Create storage folder if it doesn't exist
@@ -240,7 +250,7 @@ $storages | ForEach-Object {
         New-Item -ItemType Directory -Path $contFolderPath | Out-Null
     }
     $fileOutputPath = Join-Path -Path $contFolderPath -ChildPath "blobs.xml"
-    Write-Verbose -Message "Listing blobs: $($uriBuilderEndpoint.Uri)"
+    Write-Output "Listing blobs: $($uriBuilderEndpoint.Uri)"
     try {
         $response = Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeadersVersion
         if ($response.StatusCode -eq 200) {
@@ -261,13 +271,13 @@ $storages | ForEach-Object {
     } catch {
         Write-Warning -Message "Error processing endpoint: $($endpoint)"
         Write-Warning -Message "StatusCode: $($_.Exception.Response.StatusCode.value__)"
-        continue
+        return
     }
 
 }
 
 # Export the storage account details to a CSV file
-Write-Verbose -Message "Saving data ..."
+Write-Output "Saving data ..."
 $dataBlobs | Export-Csv -Path $blobFilePath -NoTypeInformation
 
 # Get actual date and time ...

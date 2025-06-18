@@ -28,6 +28,13 @@ To install the *Az* PowerShell module, run the following command:
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 ```
 
+## Parameters
+
+### CaseName
+
+Specifies the case's name for which the user data will be retrieved.
+This parameter is mandatory for all ParameterSets.
+
 ## Usage
 
 ```powershell

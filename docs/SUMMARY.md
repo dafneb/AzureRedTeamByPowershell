@@ -11,6 +11,7 @@
 
 * [Public](public/README.md)
   * [test-websites.ps1](public/test-websites.md)
+  * [test-storageaccounts.ps1](public/test-storageaccounts.md)
 
 ## Contribute
 
