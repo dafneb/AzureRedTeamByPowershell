@@ -1,34 +1,42 @@
 <#
 .SYNOPSIS
-    This script checks the accessibility of websites and extracts information about Azure Storage Accounts.
+    This script checks the accessibility of websites and extracts information
+    about Azure Storage Accounts.
 
 .DESCRIPTION
-    The script takes a list of websites either from the command line or from a file, checks their accessibility,
-    and extracts information about Azure Storage Accounts if available. The results are saved in a CSV file.
+    The script takes a list of websites either from the command line or from
+    a file, checks their accessibility, and extracts information about Azure
+    Storage Accounts if available. The results are saved in a CSV file.
 
 .PARAMETER CaseName
-    The name of the case. This will be used to create a folder for storing results.
+    The name of the case. This will be used to create a folder for storing
+    results.
 
 .PARAMETER Uri
-    The list of website URIs to check. This parameter is used when the 'Uri' parameter set is selected.
+    The list of website URIs to check. This parameter is used when the 'Uri'
+    parameter set is selected.
 
 .PARAMETER FilePath
-    The path to a file containing a list of website URIs. This parameter is used when the 'File' parameter set is selected.
+    The path to a file containing a list of website URIs. This parameter is
+    used when the 'File' parameter set is selected.
 
 .EXAMPLE
     ./test-websites.ps1 -CaseName "example-case" -Uri "https://example.com", "https://another-example.com"
-    This command checks the accessibility of the specified websites and extracts information about Azure Storage Accounts.
+    This command checks the accessibility of the specified websites and
+    extracts information about Azure Storage Accounts.
 
 .EXAMPLE
     ./test-websites.ps1 -CaseName "example-case" -FilePath "/path/to/websites.txt"
-    This command checks the accessibility of the websites listed in the specified file and extracts information about Azure Storage Accounts.
+    This command checks the accessibility of the websites listed in
+    the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
-    The output is saved in a text file located in a case-specific folder under the "case" directory.
+    The output is saved in a text file located in a case-specific folder under
+    the "case" directory.
 
     Author: David Burel (@dafneb)
-    Date: April 18, 2025
-    Version: 1.0.0
+    Date: June 18, 2025
+    Version: 1.0.1
 #>
 
 # Define the script's parameters
@@ -37,11 +45,11 @@ param (
     [Parameter(Mandatory = $true, ParameterSetName = "Uri")]
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name",
+    [string]$CaseName,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Uri')]
     [ValidateNotNullOrEmpty()]
-    [string[]]$Uri = "website-uri",
+    [string[]]$Uri,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
     [ValidateNotNullOrEmpty()]
@@ -72,7 +80,7 @@ $caseFolderName = $caseFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs and case folders
 $baseFolderPath = Join-Path -Path (Get-Location) -ChildPath "case"
 $caseFolderPath = Join-Path -Path $baseFolderPath -ChildPath "$($caseFolderName)"
-$storFilePath = Join-Path -Path $caseFolderPath -ChildPath "storageaccounts.csv"
+$storFilePath = Join-Path -Path $caseFolderPath -ChildPath "pub-storageaccounts.csv"
 
 Write-Verbose -Message "Checking folders ..."
 
@@ -127,18 +135,19 @@ $websites | ForEach-Object {
         $websiteUri = New-Object System.UriBuilder($address)
     } catch {
         Write-Warning -Message "Error processing address: $($address)"
-        continue
+        return
     }
 
     # Let's check if the website is accessible
+    Write-Output "Checking the website: $($websiteUri.Uri)"
     try {
         $response = Invoke-WebRequest -Uri $websiteUri.Uri
         Write-Verbose -Message "StatusCode: $($response.StatusCode)"
         Write-Verbose -Message "StatusDescription: $($response.StatusDescription)"
     } catch {
-        Write-Warning -Message "Failed to access the website: $($address)"
+        Write-Warning -Message "Failed to access the website: $($websiteUri.Uri)"
         Write-Warning -Message "StatusCode: $($_.Exception.Response.StatusCode.value__)"
-        continue
+        return
     }
 
     # Check headers
@@ -173,9 +182,9 @@ $websites | ForEach-Object {
         }
 
     } else {
-        Write-Warning -Message "Failed to access the website: $($address)"
+        Write-Warning -Message "Failed to access the website: $($websiteUri.Uri)"
         Write-Warning -Message "StatusCode: $($response.StatusCode)"
-        continue
+        return
     }
 
 }
