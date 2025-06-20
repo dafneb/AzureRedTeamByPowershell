@@ -10,6 +10,7 @@
 ## Public parts
 
 * [Public](public/README.md)
+  * [test-subdomains.ps1](public/test-subdomains.md)
   * [test-websites.ps1](public/test-websites.md)
   * [test-storageaccounts.ps1](public/test-storageaccounts.md)
   * [get-storageblob.ps1](public/get-storageblob.md)
