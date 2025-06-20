@@ -259,8 +259,8 @@ $services | ForEach-Object {
             $tmpResultInner = $tmpURL | ForEach-Object -Parallel {
                 $requestedURL = $_.Trim()
                 try {
-                    $dnsResult = Resolve-DnsName -Name $requestedURL -Type A -DnsOnly
-                    if ($dnsResult) {
+                    $dnsResult = Resolve-DnsName -Name $requestedURL -Type A -DnsOnly -NoHostsFile -QuickTimeout
+                    if ($dnsResult -and ($dnsResult.Count -gt 0) -and ($dnsResult[0].RecordData -notlike '*communications error*') -and ($dnsResult[0].RecordData -notlike '*warning*')) {
                         [PSCustomObject]@{
                             ServiceId = $using:service.Id;
                             Value = $requestedURL;
