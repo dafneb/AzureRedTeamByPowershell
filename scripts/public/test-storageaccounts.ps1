@@ -193,6 +193,7 @@ $storages | ForEach-Object {
         $response = Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeaders
         if ($response.StatusCode -eq 200) {
             $response.Content | Out-File -FilePath $fileOutputPath
+            Write-Warning "Found: $($fileOutputPath)"
             $XmlDocument = New-Object System.XML.XMLDocument
             $XmlDocument.Load($fileOutputPath)
         }
@@ -212,6 +213,7 @@ $storages | ForEach-Object {
         $response = Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeaders
         if ($response.StatusCode -eq 200) {
             $response.Content | Out-File -FilePath $fileOutputPath
+            Write-Warning "Found: $($fileOutputPath)"
             $XmlDocument = New-Object System.XML.XMLDocument
             $XmlDocument.Load($fileOutputPath)
         }
@@ -231,6 +233,7 @@ $storages | ForEach-Object {
         $response = Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeaders
         if ($response.StatusCode -eq 200) {
             $response.Content | Out-File -FilePath $fileOutputPath
+            Write-Warning "Found: $($fileOutputPath)"
             $XmlDocument = New-Object System.XML.XMLDocument
             $XmlDocument.Load($fileOutputPath)
         }
