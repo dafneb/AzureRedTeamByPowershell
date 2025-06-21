@@ -3,11 +3,14 @@
     Download blobs from Azure Storage Account.
 
 .DESCRIPTION
-    This script downloads blobs from an Azure Storage Account. It can download blobs with or without a version ID.
-    The script can also read a CSV file containing the list of blobs to download.
+    This script downloads blobs from an Azure Storage Account. It can download
+    blobs with or without a version ID.
+    The script can also read a CSV file containing the list of
+    blobs to download.
 
 .PARAMETER CaseName
-    Specifies the case's name for which the user data will be retrieved. This parameter is mandatory.
+    The name of the case. This will be used to create a folder for storing
+    results.
 
 .PARAMETER StorageAccount
     Specifies the name of the Azure Storage Account. This parameter is mandatory.
@@ -19,19 +22,21 @@
     Specifies the name of the blob to be downloaded. This parameter is mandatory.
 
 .PARAMETER VersionId
-    Specifies the version ID of the blob to be downloaded. This parameter is mandatory when using the 'VersionId' parameter set.
+    Specifies the version ID of the blob to be downloaded.
+    This parameter is optional.
 
 .PARAMETER FilePath
-    Specifies the path to a CSV file containing the list of blobs to download. This parameter is mandatory when using the 'File' parameter set.
+    Specifies the path to a CSV file containing the list of blobs to download.
 
 .EXAMPLE
     ./get-storageblob.ps1 -CaseName "contoso.com" -StorageAccount "mystorageaccount" -Container "mycontainer" -Blob "myblob.txt"
-    This example retrieves the specified blob from the Azure Storage Account and saves it to a local directory.
+    This example retrieves the specified blob from the Azure Storage Account
+    and saves it to a local directory.
 
 .NOTES
     Author: David Burel (@dafneb)
-    Date: April 20, 2025
-    Version: 1.0.0
+    Date: June 18, 2025
+    Version: 1.0.1
 #>
 
 # Define the script's parameters
@@ -41,7 +46,7 @@ param (
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
     [ValidateNotNullOrEmpty()]
-    [string]$CaseName = "case-name",
+    [string]$CaseName,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
@@ -162,13 +167,13 @@ $blobsToDownload | ForEach-Object {
     $blobik = $_
     Write-Verbose -Message "Processing blob: $blobik"
     $endpoint = "https://$($blobik.StorageAccount).blob.core.windows.net/"
-    Write-Verbose -Message "Endpoint: $($endpoint)"
+    Write-Output "Endpoint: $($endpoint)"
     # URI builder for the blob storage
     try {
         $uriBuilderEndpoint = New-Object System.UriBuilder($endpoint)
     } catch {
         Write-Warning -Message "Error processing endpoint: $($endpoint)"
-        continue
+        return
     }
     $storFolderPath = Join-Path -Path $caseFolderPath -ChildPath $uriBuilderEndpoint.Host
     # Create storage folder if it doesn't exist
@@ -218,12 +223,12 @@ $blobsToDownload | ForEach-Object {
     }
     # Download the blob
     try {
-        Write-Verbose -Message "Uri: $($uriBuilderEndpoint.Uri)"
+        Write-Output "Uri: $($uriBuilderEndpoint.Uri)"
         Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeadersVersion -OutFile $fileOutputPath -UseBasicParsing
         Write-Verbose -Message "Blob downloaded: $($fileOutputPath)"
     } catch {
         Write-Warning -Message "Error downloading blob: $($blobik.Blob) from $($blobik.StorageAccount) in $($blobik.Container)"
-        continue
+        return
     }
 
 }

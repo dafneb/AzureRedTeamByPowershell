@@ -13,7 +13,6 @@ description: Documentation website
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/powershell-analyzer.yml?label=PSScriptAnalyzer)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dafneb/AzureRedTeamByPowershell/codeql.yml?label=CodeQL)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/dafneb/AzureRedTeamByPowershell/main.svg)](https://results.pre-commit.ci/latest/github/dafneb/AzureRedTeamByPowershell/main)
-[![GitBook](https://img.shields.io/static/v1?message=Documented%20on%20GitBook&logo=gitbook&logoColor=ffffff&label=%20&labelColor=5c5c5c&color=3F89A1)](https://dafneb.gitbook.io/azureredteambypowershell)
 
 This repository contains a set of PowerShell scripts to help red teamers and pentesters to enumerate and test Microsoft 365, Entra ID and Azure environments.
 

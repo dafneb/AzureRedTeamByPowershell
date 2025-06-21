@@ -9,6 +9,9 @@ description: Test Azure Storage Accounts for visible blobs
 This script checks the accessibility of Azure Storage Accounts from public
 and extracts information about them.
 
+Results could be found at files:
+* StorageAccounts: "./case/$CaseName/pub-blobs.csv"
+
 ## Requirements
 
 This script requires PowerShell v7.4 or higher.
@@ -41,6 +44,10 @@ Required columns in the CSV file:
 * `Container`: The name of the container within the storage account.
 
 ## Usage
+
+```powershell
+./scripts/public/test-storageaccounts.ps1 -CaseName "<case>" -StorageAccount "<storageaccount>" -Container "<container>"
+```
 
 ```powershell
 ./scripts/public/test-storageaccounts.ps1 -CaseName "<case>" -FilePath "/path/to/storageaccounts.csv"
