@@ -104,6 +104,7 @@ if ($PermutationFilePath) {
 
 # Prepare hash table for services
 # Reference: https://learn.microsoft.com/en-gb/azure/security/fundamentals/azure-domains
+# Reference: https://github.com/yuyudhn/AzSubEnum/blob/main/azsubenum.py#L46
 $services = @()
 $services += [PSCustomObject]@{
     Id = 'sharepoint';
@@ -151,10 +152,15 @@ $services += [PSCustomObject]@{
     Suffixes = @('azurecontainer.io')
 }
 $services += [PSCustomObject]@{
-    Id = 'cdn';
-    Name = 'Azure Content Delivery Network (CDN)';
-    Suffixes = @('vo.msecnd.net')
+    Id = 'redis';
+    Name = 'Azure Redis Cache';
+    Suffixes = @('redis.cache.windows.net')
 }
+# $services += [PSCustomObject]@{
+#     Id = 'cdn';
+#     Name = 'Azure Content Delivery Network (CDN)';
+#     Suffixes = @('vo.msecnd.net')
+# }
 $services += [PSCustomObject]@{
     Id = 'cosmosdb';
     Name = 'Azure Cosmos DB';
@@ -165,11 +171,11 @@ $services += [PSCustomObject]@{
     Name = 'Azure Files';
     Suffixes = @('file.core.windows.net')
 }
-$services += [PSCustomObject]@{
-    Id = 'frontdoor';
-    Name = 'Azure Front Door';
-    Suffixes = @('azurefd.net')
-}
+# $services += [PSCustomObject]@{
+#     Id = 'frontdoor';
+#     Name = 'Azure Front Door';
+#     Suffixes = @('azurefd.net')
+# }
 $services += [PSCustomObject]@{
     Id = 'keyvault';
     Name = 'Azure Key Vault';
