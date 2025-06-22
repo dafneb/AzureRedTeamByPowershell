@@ -10,7 +10,11 @@ This script checks the accessibility of Azure Storage Accounts from public
 and extracts information about them.
 
 Results could be found at files:
-* StorageAccounts: "./case/$CaseName/pub-blobs.csv"
+* StorageAccounts - Blobs: "./case/$CaseName/$StorageAccount-blob-endpoint/$Container/pub-blobs.csv"
+
+Helping files (if results received):
+* StorageAccounts - Containers: "./case/$CaseName/$StorageAccount-blob-endpoint/containers.xml"
+* StorageAccounts - Blobs: "./case/$CaseName/$StorageAccount-blob-endpoint/$Container/blobs.xml"
 
 ## Requirements
 

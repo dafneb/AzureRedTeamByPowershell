@@ -11,9 +11,14 @@ description: Internal view of resources
 
 ## Reconnaissance
 
+### Entra ID
+
 * get-entrausers.ps1 - Enumerates users in Entra ID
-* get-rolesassignment.ps1 - Enumerates role assignments in Azure
+
+### Azure
+
 * get-visibleresources.ps1 - Enumerates visible resources in Azure
+* get-rolesassignment.ps1 - Enumerates role assignments in Azure
 
 ---
 
