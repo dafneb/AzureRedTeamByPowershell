@@ -17,6 +17,9 @@ Results could be found at files:
 * All subdomains: "./case/\$CaseName/pub-subdomains.txt"
 * Per services: "./case/\$CaseName/services/pub-\$ServiceId.txt"
 
+When script is executed, it will create a directory structure or remove
+all files at existing structure.
+
 Debug information for checked domain is written to the file:
 * "./case/\$CaseName/dns-results/\$CheckDomain-dns.txt".
 
