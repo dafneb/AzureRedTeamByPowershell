@@ -1,4 +1,28 @@
 <#
+.SYNOPSIS
+    This script enumerates subdomains for Azure services based on provided base domains and optional permutations.
+    It resolves DNS names and saves the results in a structured format.
+
+.DESCRIPTION
+    The script allows you to specify a case name, a list of base domains, and an optional file containing permutations.
+    It resolves DNS names for various Azure services and saves the results in a case-specific directory structure.
+
+.PARAMETER CaseName
+    The name of the case, which will be used to create a directory for storing results.
+
+.PARAMETER Base
+    An array of base domains to check for subdomains.
+
+.PARAMETER FilePath
+    A file containing base domains to check for subdomains.
+
+.PARAMETER PermutationFilePath
+    An optional file containing permutations to append to the base domains.
+
+.NOTES
+    Author: David Burel (@dafneb)
+    Date: July 2, 2025
+    Version: 1.0.0
 #>
 
 # Define the script's parameters
