@@ -31,12 +31,9 @@
     the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
-    The output is saved in a csv file located in a case-specific folder
-    under the "case" directory.
-
     Author: David Burel (@dafneb)
-    Date: June 18, 2025
-    Version: 1.0.1
+    Date: July 2, 2025
+    Version: 1.0.2
 #>
 
 # Define the script's parameters
@@ -80,7 +77,9 @@ $caseFolderName = $caseFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs and case folders
 $baseFolderPath = Join-Path -Path (Get-Location) -ChildPath "case"
 $caseFolderPath = Join-Path -Path $baseFolderPath -ChildPath "$($caseFolderName)"
-$storFilePath = Join-Path -Path $caseFolderPath -ChildPath "pub-storageaccounts.csv"
+$servicesFolderPath = Join-Path -Path $caseFolderPath -ChildPath "services"
+$storageFolderPath = Join-Path -Path $caseFolderPath -ChildPath "storage"
+$blobFilePath = Join-Path -Path $servicesFolderPath -ChildPath "pub-storageblobs.txt"
 
 Write-Verbose -Message "Checking folders ..."
 
@@ -96,12 +95,24 @@ if (-not (Test-Path -Path $caseFolderPath)) {
     New-Item -ItemType Directory -Path $caseFolderPath | Out-Null
 }
 
-# Create log file if it doesn't exist
-if (-not (Test-Path -Path $storFilePath)) {
-    Write-Verbose -Message "Log file does not exist, creating it..."
-    New-Item -ItemType File -Path $storFilePath | Out-Null
+# Create services folder if it doesn't exist
+if (-not (Test-Path -Path $servicesFolderPath)) {
+    Write-Verbose -Message "Services folder does not exist, creating it..."
+    New-Item -ItemType Directory -Path $servicesFolderPath | Out-Null
+}
+
+# Create storage folder if it doesn't exist
+if (-not (Test-Path -Path $storageFolderPath)) {
+    Write-Verbose -Message "Storage folder does not exist, creating it..."
+    New-Item -ItemType Directory -Path $storageFolderPath | Out-Null
+}
+
+# Create blob log file if it doesn't exist
+if (-not (Test-Path -Path $blobFilePath)) {
+    Write-Verbose -Message "Blob log file does not exist, creating it..."
+    New-Item -ItemType File -Path $blobFilePath | Out-Null
 } else {
-    Clear-Content -Path $storFilePath
+    Clear-Content -Path $blobFilePath
 }
 
 # Prepare list of websites to check
@@ -117,7 +128,7 @@ switch ($PSCmdlet.ParameterSetName) {
         # Get websites from a file
         Write-Verbose -Message "Reading websites from file $($FilePath) ..."
         if (Test-Path -Path $FilePath -PathType Leaf) {
-            $websites += Get-Content -Path $FilePath
+            $websites = Get-Content -Path $FilePath
         } else {
             Write-Error -Message "File not found: $($FilePath)" -Category ObjectNotFound
             exit
@@ -127,7 +138,8 @@ switch ($PSCmdlet.ParameterSetName) {
 
 # Let's check the websites ....
 Write-Verbose -Message "Checking websites ..."
-$dataStorages = @()
+$dataContainers = @()
+$dataBlobs = @()
 $websites | ForEach-Object {
     $address = $_.Trim()
     Write-Verbose -Message "Processing address: $($address)"
@@ -161,10 +173,10 @@ $websites | ForEach-Object {
     Write-Verbose -Message "Checking for blob storage ..."
     if ($response.StatusCode -eq 200) {
         # Check if the website contains any link to a blob storage
-        # Pattern for all services under StorageAccount 'https://([0-9a-z]{3,24})\.(blob|web|dfs|file|queue|table)\.core\.windows\.net/([0-9a-z-_$]{3,63})/'
+        # Pattern for all services under StorageAccount 'https://([0-9a-z]{3,24})\.blob\.core\.windows\.net/([0-9a-z-_$]{3,63})/'
         Write-Verbose -Message "Checking for regular expression against context:"
-        Write-Verbose -Message "Pattern: (?<endpoint>https://(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/"
-        $results = $response.Content | Select-String -Pattern '(?<endpoint>https://(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/' -AllMatches
+        Write-Verbose -Message "Pattern: https://(?<endpoint>(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/"
+        $results = $response.Content | Select-String -Pattern 'https://(?<endpoint>(?<storageacc>[0-9a-z]{3,24})\.blob\.core\.windows\.net)/(?<container>[0-9a-z-_$]{3,63})/' -AllMatches
         # We want to get unique matches
         $uniqueMatches = $results.Matches | Select-Object -Unique
         Write-Verbose -Message "Unique Matches:"
@@ -173,14 +185,16 @@ $websites | ForEach-Object {
             Write-Verbose -Message "Endpoint: $($_.Groups['endpoint'].Value)"
             Write-Verbose -Message "StorageAccount: $($_.Groups['storageacc'].Value)"
             Write-Verbose -Message "Container: $($_.Groups['container'].Value)"
-            $dataStorages += [PSCustomObject]@{
+            if (-not ($dataBlobs -contains $_.Groups['endpoint'].Value)) {
+                $dataBlobs += $_.Groups['endpoint'].Value
+            }
+            $dataContainers += [PSCustomObject]@{
                 Value = "$($_.Value)";
                 Endpoint = "$($_.Groups['endpoint'].Value)";
                 StorageAccount = "$($_.Groups['storageacc'].Value)";
                 Container = "$($_.Groups['container'].Value)"
             }
         }
-
     } else {
         Write-Warning -Message "Failed to access the website: $($websiteUri.Uri)"
         Write-Warning -Message "StatusCode: $($response.StatusCode)"
@@ -190,8 +204,22 @@ $websites | ForEach-Object {
 }
 
 # Export the storage account details to a CSV file
-Write-Output -Message "Saving data ..."
-$dataStorages | Export-Csv -Path $storFilePath -NoTypeInformation
+Write-Output "Saving data ..."
+$dataBlobs | Out-File -FilePath $blobFilePath -Encoding UTF8
+$dataBlobs | ForEach-Object {
+    $endpoint = $_
+    $dataContainersForBlob = $dataContainers | Where-Object { $_.Endpoint -eq $endpoint }
+    if ($dataContainersForBlob.Count -eq 0) {
+        return
+    }
+    $endpointFolderPath = Join-Path -Path $storageFolderPath -ChildPath $endpoint
+    $containersFilePath = Join-Path -Path $endpointFolderPath -ChildPath "pub-storagecontainers.csv"
+    if (-not (Test-Path -Path $endpointFolderPath)) {
+        Write-Verbose -Message "Creating folder for endpoint: $($endpoint)"
+        New-Item -ItemType Directory -Path $endpointFolderPath | Out-Null
+    }
+    $dataContainersForBlob | Export-Csv -Path $containersFilePath -NoTypeInformation -Encoding UTF8
+}
 
 # Get actual date and time ...
 $timeEnd = Get-Date

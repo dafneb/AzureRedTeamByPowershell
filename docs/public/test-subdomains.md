@@ -14,7 +14,16 @@ You are able to enrich the list of subdomains with the list of words for
 permutations.
 
 Results could be found at files:
-* Subdomains: "./case/$CaseName/pub-subdomains.txt"
+
+- All subdomains: "./case/\$CaseName/pub-subdomains.txt"
+- Per services: "./case/\$CaseName/services/pub-\$ServiceId.txt"
+
+When script is executed, it will create a directory structure or remove
+all files at existing structure.
+
+Debug information for checked domain is written to the file:
+
+- "./case/\$CaseName/dns-results/\$CheckDomain-dns.txt".
 
 {% hint style="warning" %}
 **Warning:** This script does not perform any brute-force attacks or
@@ -39,27 +48,53 @@ will find the exact module that contains the cmdlet:
 Find-Command -Repository PSGallery -Name Resolve-DnsName
 ```
 
+{% hint style="warning" %}
+**Warning:**
+The script requires internet access to resolve DNS names.
+Ensure that your environment has access to the internet.
+Ensure that your DNS client is configured correctly to resolve DNS names.
+Each misconfiguration of DNS client may lead to corrupted results.
+{% endhint %}
+
+Check your DNS client configuration, If you will see the error message like this:
+
+```terminal
+WARNING: Communications error for: xxx
+```
+
 ## Parameters
 
 ### CaseName
+
+*Type: `string`*
 
 Specifies the case's name for which the user data will be retrieved.
 This parameter is mandatory for all ParameterSets.
 
 ### Base
 
+*Type: `string[]`*
+
 Specifies a base subdomain to test.
 This parameter is mandatory for ParameterSet "Base".
 
 ### FilePath
+
+*Type: `string`*
 
 Specifies the path to the file containing the list of bases.
 This parameter is mandatory for ParameterSet "File".
 
 ### PermutationFilePath
 
+*Type: `string`*
+
 Specifies the path to the file containing the list of words for permutations.
 This parameter is optional for all ParameterSets.
+
+### CommonParameters
+
+*Supports common parameters: `-Verbose`, `-Debug`, `-ErrorAction`, `-WarningAction`, `-InformationAction`, `-OutVariable`, `-OutBuffer`.*
 
 ## Usage
 
@@ -73,8 +108,8 @@ This parameter is optional for all ParameterSets.
 
 ---
 
-#### Changelog
+### Changelog
 
-*Version: 1.0.0*
+#### Version: 1.0.0
 
 - Initial version.

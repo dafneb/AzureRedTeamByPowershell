@@ -6,14 +6,25 @@ description: Internal view of resources
 
 ## Connection to Azure/M365/Entra ID
 
-* get-armconnectionasdevice.ps1 - Connects to Azure Resource Manager with DeviceCode flow
-* get-armconnectionasuser.ps1 - Connects to Azure Resource Manager as user
+| Script  | Description  |
+| --- | --- |
+| get-armconnectionasdevice.ps1 | Connects to Azure Resource Manager with DeviceCode flow. |
+| get-armconnectionasuser.ps1 | Connects to Azure Resource Manager as user. |
 
 ## Reconnaissance
 
-* get-entrausers.ps1 - Enumerates users in Entra ID
-* get-rolesassignment.ps1 - Enumerates role assignments in Azure
-* get-visibleresources.ps1 - Enumerates visible resources in Azure
+### Entra ID
+
+| Script  | Description  |
+| --- | --- |
+| get-entrausers.ps1 | Enumerates users in Entra ID. |
+
+### Azure
+
+| Script  | Description  |
+| --- | --- |
+| get-visibleresources.ps1 | Enumerates visible resources in Azure. |
+| get-rolesassignment.ps1 | Enumerates role assignments in Azure. |
 
 ---
 

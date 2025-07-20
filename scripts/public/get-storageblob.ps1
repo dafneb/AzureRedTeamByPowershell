@@ -1,62 +1,23 @@
 <#
-.SYNOPSIS
-    Download blobs from Azure Storage Account.
-
-.DESCRIPTION
-    This script downloads blobs from an Azure Storage Account. It can download
-    blobs with or without a version ID.
-    The script can also read a CSV file containing the list of
-    blobs to download.
-
-.PARAMETER CaseName
-    The name of the case. This will be used to create a folder for storing
-    results.
-
-.PARAMETER StorageAccount
-    Specifies the name of the Azure Storage Account. This parameter is mandatory.
-
-.PARAMETER Container
-    Specifies the name of the Azure Storage Container. This parameter is mandatory.
-
-.PARAMETER Blob
-    Specifies the name of the blob to be downloaded. This parameter is mandatory.
-
-.PARAMETER VersionId
-    Specifies the version ID of the blob to be downloaded.
-    This parameter is optional.
-
-.PARAMETER FilePath
-    Specifies the path to a CSV file containing the list of blobs to download.
-
-.EXAMPLE
-    ./get-storageblob.ps1 -CaseName "contoso.com" -StorageAccount "mystorageaccount" -Container "mycontainer" -Blob "myblob.txt"
-    This example retrieves the specified blob from the Azure Storage Account
-    and saves it to a local directory.
-
 .NOTES
     Author: David Burel (@dafneb)
-    Date: June 18, 2025
-    Version: 1.0.1
+    Date: July 20, 2025
+    Version: 1.0.2
 #>
 
 # Define the script's parameters
 [CmdletBinding(DefaultParameterSetName = 'Blob')]
 param (
-    [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
-    [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
+    [Parameter(Mandatory = $true, ParameterSetName = "Blob")]
     [Parameter(Mandatory = $true, ParameterSetName = 'File')]
+    [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
     [string]$CaseName,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
     [ValidateNotNullOrEmpty()]
-    [string]$StorageAccount,
-
-    [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
-    [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
-    [ValidateNotNullOrEmpty()]
-    [string]$Container,
+    [string]$ContainerEndpoints,
 
     [Parameter(Mandatory = $true, ParameterSetName = 'Blob')]
     [Parameter(Mandatory = $true, ParameterSetName = 'VersionId')]
@@ -96,6 +57,7 @@ $caseFolderName = $caseFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs and case folders
 $baseFolderPath = Join-Path -Path (Get-Location) -ChildPath "case"
 $caseFolderPath = Join-Path -Path $baseFolderPath -ChildPath "$($caseFolderName)"
+$storageFolderPath = Join-Path -Path $caseFolderPath -ChildPath "storage"
 
 Write-Verbose -Message "Checking folders ..."
 
@@ -111,94 +73,115 @@ if (-not (Test-Path -Path $caseFolderPath)) {
     New-Item -ItemType Directory -Path $caseFolderPath | Out-Null
 }
 
+# Create storage folder if it doesn't exist
+if (-not (Test-Path -Path $storageFolderPath)) {
+    Write-Verbose -Message "Storage folder does not exist, creating it..."
+    New-Item -ItemType Directory -Path $storageFolderPath | Out-Null
+}
+
 # Prepare list of blobs to download
 $blobsToDownload = @()
 switch ($PSCmdlet.ParameterSetName) {
     'Blob' {
-        # Add blob to download list
-        Write-Verbose -Message "Creating custom object for storage account and container amd blob from command line ..."
+        Write-Verbose -Message "Reading endpoints from command line (/wo VersionId) ..."
         $blobsToDownload += [PSCustomObject]@{
-            StorageAccount = $StorageAccount
-            Container      = $Container
-            Blob           = $Blob
-            VersionId      = $null
+            Container = $ContainerEndpoints
+            Blob      = $Blob
+            VersionId = $null
         }
     }
     'VersionId' {
-        # Add blob with version ID to download list
-        Write-Verbose -Message "Creating custom object for storage account and container and blob with version from command line ..."
+        Write-Verbose -Message "Reading endpoints from command line (/w VersionId) ..."
         $blobsToDownload += [PSCustomObject]@{
-            StorageAccount = $StorageAccount
-            Container      = $Container
-            Blob           = $Blob
-            VersionId      = $VersionId
+            Container = $ContainerEndpoints
+            Blob      = $Blob
+            VersionId = $VersionId
         }
     }
     'File' {
-        # Read the CSV file and create a custom object for each row
-        Write-Verbose -Message "Reading blobs from CSV file ..."
-        if (Test-Path -Path $FilePath) {
-            try {
-                $import = Import-Csv -Path $FilePath
-                $import | ForEach-Object {
+        Write-Verbose -Message "Reading endpoints from file: $($FilePath) ..."
+        if (Test-Path -Path $FilePath -PathType Leaf) {
+            $csvContent = Import-Csv -Path $FilePath -Delimiter ',' -Encoding UTF8
+            $csvContent | ForEach-Object {
+                $row = $_
+                if ($row.Value -and $row.BlobName) {
                     $blobsToDownload += [PSCustomObject]@{
-                        StorageAccount = $_.StorageAccount
-                        Container      = $_.Container
-                        Blob           = $_.BlobName
-                        VersionId      = $_.VersionId
+                        Container = $row.Value
+                        Blob      = $row.BlobName
+                        VersionId = ($row.VersionId -ne $null) ? $row.VersionId : $null
                     }
+
+                } elseif ($row.Endpoint -and $row.Container -and $row.BlobName) {
+                    $blobsToDownload += [PSCustomObject]@{
+                        Container = 'https://' + $row.Endpoint + '/' + $row.Container
+                        Blob      = $row.BlobName
+                        VersionId = ($row.VersionId -ne $null) ? $row.VersionId : $null
+                    }
+
+                } else {
+                    Write-Warning "CSV row does not contain all required columns"
+                    return
+
                 }
-
-            } catch {
-                Write-Error -Message "Error reading CSV file: $($FilePath)" -Category InvalidOperation
-                exit
             }
-
         } else {
-            Write-Error -Message "File not found: $($FilePath)" -Category ObjectNotFound
+            Write-Error -Message "File path '$FilePath' does not exist." -Category ObjectNotFound
             exit
         }
+
     }
 }
 
 # Let's download blobs ....
 Write-Verbose -Message "Downloading blobs ..."
-$blobsToDownload | ForEach-Object {
+$blobsToDownload | ForEach-Object -Parallel {
     $blobik = $_
-    Write-Verbose -Message "Processing blob: $blobik"
-    $endpoint = "https://$($blobik.StorageAccount).blob.core.windows.net/"
-    Write-Output "Endpoint: $($endpoint)"
+    Write-Output "Processing: $($blobik.Blob) at $($blobik.Container)"
+    $VerbosePreference = $using:VerbosePreference
+    $DebugPreference = $using:DebugPreference
+    $storageFolderPath = $using:storageFolderPath
+
+    # Prepare the request headers
+    # x-ms-version: 2025-05-05
+    # x-ms-date: {{$datetime rfc1123}}
+    # x-ms-client-request-id: {{$guid}}
+    $requestHeaders = @{
+        'x-ms-version' = '2025-05-05';
+        'x-ms-date' = (Get-Date).ToUniversalTime().ToString("R");
+        'x-ms-client-request-id' = [guid]::NewGuid().ToString();
+    }
+
     # URI builder for the blob storage
     try {
-        $uriBuilderEndpoint = New-Object System.UriBuilder($endpoint)
+        $uriBuilderEndpoint = New-Object System.UriBuilder($blobik.Container)
+        $uriBuilderEndpoint.Scheme = 'https'
+        $uriBuilderEndpoint.Port = 443
     } catch {
-        Write-Warning -Message "Error processing endpoint: $($endpoint)"
+        Write-Warning -Message "Error processing endpoint: $($blobik.Container)"
         return
     }
-    $storFolderPath = Join-Path -Path $caseFolderPath -ChildPath $uriBuilderEndpoint.Host
-    # Create storage folder if it doesn't exist
-    if (-not (Test-Path -Path $storFolderPath)) {
-        Write-Verbose -Message "Storage folder does not exist, creating it..."
-        New-Item -ItemType Directory -Path $storFolderPath | Out-Null
+
+    # Endpoint folder path
+    $endpointFolderPath = Join-Path -Path $storageFolderPath -ChildPath $uriBuilderEndpoint.Host
+    if (-not (Test-Path -Path $endpointFolderPath)) {
+        Write-Verbose -Message "Creating folder for endpoint: $($endpoint)"
+        New-Item -ItemType Directory -Path $endpointFolderPath | Out-Null
     }
-    $contFolderPath = Join-Path -Path $storFolderPath -ChildPath $blobik.Container
-    # Create container folder if it doesn't exist
-    if (-not (Test-Path -Path $contFolderPath)) {
-        Write-Verbose -Message "Container folder does not exist, creating it..."
-        New-Item -ItemType Directory -Path $contFolderPath | Out-Null
+    $containerName = $uriBuilderEndpoint.Path.TrimStart('/')
+    $containerFolderPath = Join-Path -Path $endpointFolderPath -ChildPath $containerName
+    if (-not (Test-Path -Path $containerFolderPath)) {
+        Write-Verbose -Message "Creating folder for container: $($containerName)"
+        New-Item -ItemType Directory -Path $containerFolderPath | Out-Null
     }
-    $blobsFolderPath = Join-Path -Path $contFolderPath -ChildPath "blobs"
+    $blobsFolderPath = Join-Path -Path $containerFolderPath -ChildPath "blobs"
     # Create blob folder if it doesn't exist
     if (-not (Test-Path -Path $blobsFolderPath)) {
         Write-Verbose -Message "Blob folder does not exist, creating it..."
         New-Item -ItemType Directory -Path $blobsFolderPath | Out-Null
     }
 
+    $versFolderPath = $blobsFolderPath
     if ($blobik.VersionId) {
-        # Download blob with version ID
-        Write-Verbose -Message "Downloading blob with version ID: $($blobik.Blob)"
-        $uriBuilderEndpoint.Path = "$($blobik.Container)/$($blobik.Blob)"
-        $uriBuilderEndpoint.Query = "versionId=$($blobik.VersionId)"
         # Normalize case name to lowercase
         $versFolderName = $blobik.VersionId.ToLower()
         $versFolderName = $versFolderName.Trim()
@@ -209,29 +192,20 @@ $blobsToDownload | ForEach-Object {
             Write-Verbose -Message "Version folder does not exist, creating it..."
             New-Item -ItemType Directory -Path $versFolderPath | Out-Null
         }
-    } else {
-        # Download blob without version ID
-        Write-Verbose -Message "Downloading blob: $($blobik.Blob)"
-        $uriBuilderEndpoint.Path = "$($blobik.Container)/$($blobik.Blob)"
-        $versFolderPath = $blobsFolderPath
     }
+    $uriBuilderEndpoint.Path = "$($containerName)/$($blobik.Blob)"
+    $uriBuilderEndpoint.Query = ($blobik.VersionId) ? "versionId=$($blobik.VersionId)" : $null
     $fileOutputPath = Join-Path -Path $versFolderPath -ChildPath $blobik.Blob
-    $requestHeadersVersion = @{
-        "x-ms-version" = "2019-12-12";
-        "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-        "Accept-Language" = "en-US,en;q=0.5";
-    }
-    # Download the blob
+
     try {
-        Write-Output "Uri: $($uriBuilderEndpoint.Uri)"
-        Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeadersVersion -OutFile $fileOutputPath -UseBasicParsing
+        Invoke-WebRequest -Uri $uriBuilderEndpoint.Uri -Headers $requestHeaders -OutFile $fileOutputPath -UseBasicParsing
         Write-Verbose -Message "Blob downloaded: $($fileOutputPath)"
     } catch {
-        Write-Warning -Message "Error downloading blob: $($blobik.Blob) from $($blobik.StorageAccount) in $($blobik.Container)"
+        Write-Warning -Message "Error downloading blob: $($uriBuilderEndpoint.Host) in $($uriBuilderEndpoint.Path)"
         return
     }
 
-}
+} -ThrottleLimit 10
 
 # Get actual date and time ...
 $timeEnd = Get-Date
