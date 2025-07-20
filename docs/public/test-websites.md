@@ -11,8 +11,9 @@ a file, checks their accessibility, and extracts information about Azure
 Storage Accounts if available. The results are saved in a TXT and CSV file.
 
 Results could be found at files:
-* BlobStorageAccounts: "./case/\$CaseName/services/pub-storageblobs.txt"
-* BlobContainers: "./case/\$CaseName/storage/\$Endpoint/pub-storagecontainers.csv"
+
+- BlobStorageAccounts: "./case/\$CaseName/services/pub-storageblobs.txt"
+- BlobContainers: "./case/\$CaseName/storage/\$Endpoint/pub-storagecontainers.csv"
 
 ## Requirements
 
@@ -43,6 +44,10 @@ Specifies the path to the text file containing the list of websites to test.
 Each line is handled as a separate website URL or domain.
 This parameter is mandatory for ParameterSet "File".
 
+### CommonParameters
+
+*Supports common parameters: `-Verbose`, `-Debug`, `-ErrorAction`, `-WarningAction`, `-InformationAction`, `-OutVariable`, `-OutBuffer`.*
+
 ## Usage
 
 ```powershell
@@ -51,13 +56,13 @@ This parameter is mandatory for ParameterSet "File".
 
 ---
 
-#### Changelog
+### Changelog
 
-*Version: 1.0.0*
+#### Version: 1.0.0
 
 - Initial version.
 
-*Version: 1.0.2*
+#### Version: 1.0.2
 
 - Improved error handling and logging.
 - Small adjustments in logic to ensure better performance and reliability.

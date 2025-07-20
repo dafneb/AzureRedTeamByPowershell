@@ -20,10 +20,11 @@ This repository contains a set of PowerShell scripts to help red teamers and pen
 
 ## Disclaimer
 
-Scripts are provided for educational purposes only. Use them at your own risk.
-The author is not responsible for any damage caused by the use of these scripts.
-Please ensure you have permission to test the target environment before
-using these scripts.
+> [!WARNING]
+> Scripts are provided for educational purposes only. Use them at your own risk.
+> The author is not responsible for any damage caused by the use of these scripts.
+> Please ensure you have permission to test the target environment before
+> using these scripts.
 
 ## Contributing
 If you want to contribute to this project, please read the [Code_of_Conduct](https://github.com/dafneb/.github/blob/main/.github/CODE_OF_CONDUCT.md).

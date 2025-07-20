@@ -31,9 +31,6 @@
     the specified file and extracts information about Azure Storage Accounts.
 
 .NOTES
-    The output is saved in a csv file located in a case-specific folder
-    under the "case" directory.
-
     Author: David Burel (@dafneb)
     Date: July 2, 2025
     Version: 1.0.2

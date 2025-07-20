@@ -9,7 +9,19 @@
     It's trying to find containers with Anonymous access enabled.
 
 .PARAMETER CaseName
-    The name of the case, which will be used to create a directory for storing results.
+    The name of the case. This will be used to create a folder for storing
+    results.
+
+.PARAMETER BlobEndpoints
+    The list of Blob Storage endpoints to check. This parameter is used when
+    the 'Blob' parameter set is selected.
+
+.PARAMETER FilePath
+    The path to a file containing a list of Blob Storage endpoints. This
+    parameter is used when the 'File' parameter set is selected.
+
+.PARAMETER PermutationFilePath
+    The path to a file containing permutations of container names to check.
 
 .NOTES
     Author: David Burel (@dafneb)
@@ -42,7 +54,7 @@ param (
 $timeStart = Get-Date
 
 Write-Output "***********************************************************"
-Write-Output "*********** Blob Storage Accounts enumeration *************"
+Write-Output "*********** Blob Storage Accounts checking ****************"
 Write-Output "*********** Author: David Burel (@dafneb) *****************"
 Write-Output "***********************************************************"
 
@@ -145,12 +157,16 @@ $endpoints | ForEach-Object {
 
     # Endpoint folder path
     $endpointFolderPath = Join-Path -Path $storageFolderPath -ChildPath $uriBuilderEndpoint.Host
-    $containersFilePath = Join-Path -Path $endpointFolderPath -ChildPath "pub-storagecontainers.csv"
-
-    # Create endpoint folder if it doesn't exist
     if (-not (Test-Path -Path $endpointFolderPath)) {
-        Write-Verbose -Message "Endpoint folder does not exist, creating it..."
+        Write-Verbose -Message "Creating folder for endpoint: $($endpoint)"
         New-Item -ItemType Directory -Path $endpointFolderPath | Out-Null
+    }
+    $containersFilePath = Join-Path -Path $endpointFolderPath -ChildPath "pub-storagecontainers.csv"
+    if (-not (Test-Path -Path $containersFilePath)) {
+        Write-Verbose -Message "Creating containers file: $($containersFilePath)"
+        New-Item -ItemType File -Path $containersFilePath | Out-Null
+    } else {
+        Clear-Content -Path $containersFilePath
     }
 
     ### Get Account Information
@@ -252,7 +268,7 @@ $endpoints | ForEach-Object {
 
     } -ThrottleLimit 10
     if ($tmpResultInner) {
-        $tmpResultInner | Export-Csv -Path $containersFilePath -NoTypeInformation -Encoding UTF8
+        $tmpResultInner | Export-Csv -Path $containersFilePath -NoTypeInformation -Encoding UTF8 -Append
         Write-Output "Containers found: $($tmpResultInner.Count)"
     }
 }

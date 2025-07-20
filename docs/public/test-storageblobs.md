@@ -1,20 +1,25 @@
 ---
-description: Test Azure Storage Accounts for visible blobs
+description: Test Azure Storage Blob Accounts for visible containers
 ---
 
-# test-storageaccounts.ps1
+# test-storageblobs.ps1
 
 ## Description
 
-This script checks the accessibility of Azure Storage Accounts from public
-and extracts information about them.
+This script tests Azure Storage Blob Accounts for visible containers and retrieves information about them. It's trying to reach list of containers from the specified endpoints and saves the results in a CSV file.
+
+You are also able to try permutations of the endpoints with a list of words from a file, which can be useful for testing various combinations of endpoints and container names. This option could be used also for guessing names of containers.
 
 Results could be found at files:
-* StorageAccounts - Blobs: "./case/$CaseName/$StorageAccount-blob-endpoint/$Container/pub-blobs.csv"
+
+- BlobContainers: "./case/\$CaseName/storage/\$Endpoint/pub-storagecontainers.csv"
 
 Helping files (if results received):
-* StorageAccounts - Containers: "./case/$CaseName/$StorageAccount-blob-endpoint/containers.xml"
-* StorageAccounts - Blobs: "./case/$CaseName/$StorageAccount-blob-endpoint/$Container/blobs.xml"
+
+- BlobStorage - Account Information:  "./case/\$CaseName/storage/\$Endpoint/account-information.xml"
+- BlobStorage - Service Properties: "./case/\$CaseName/storage/\$Endpoint/service-properties.xml"
+- BlobStorage - Service Stats: "./case/\$CaseName/storage/\$Endpoint/service-stats.xml"
+- BlobStorage - List Containers: "./case/\$CaseName/storage/\$Endpoint/list-containers.xml"
 
 ## Requirements
 
@@ -24,43 +29,47 @@ This script requires PowerShell v7.4 or higher.
 
 ### CaseName
 
+*Type: `string`*
+
 Specifies the case's name for which the user data will be retrieved.
 This parameter is mandatory for all ParameterSets.
 
-### StorageAccount
+### BlobEndpoints
 
-Specifies the name of the storage account to test.
-This parameter is mandatory for ParameterSet "Account".
+*Type: `string[]`*
 
-### Container
-
-Specifies the name of the container within the storage account to test.
-This parameter is mandatory for ParameterSet "Account".
+Specifies the endpoints of the Azure Storage Blobs to test.
+This parameter is mandatory for ParameterSet "Blob".
 
 ### FilePath
 
-Specifies the path to the CSV file containing the list of storage accounts
-to test.
+*Type: `string`*
+
+Specifies the path to the file containing the list of endpoints.
+Each line is handled as a separate value.
 This parameter is mandatory for ParameterSet "File".
 
-Required columns in the CSV file:
-* `StorageAccount`: The name of the storage account.
-* `Container`: The name of the container within the storage account.
+### PermutationFilePath
+
+*Type: `string`*
+
+Specifies the path to the file containing the list of words for permutations.
+This parameter is mandatory for all ParameterSets.
+
+### CommonParameters
+
+*Supports common parameters: `-Verbose`, `-Debug`, `-ErrorAction`, `-WarningAction`, `-InformationAction`, `-OutVariable`, `-OutBuffer`.*
 
 ## Usage
 
 ```powershell
-./scripts/public/test-storageaccounts.ps1 -CaseName "<case>" -StorageAccount "<storageaccount>" -Container "<container>"
-```
-
-```powershell
-./scripts/public/test-storageaccounts.ps1 -CaseName "<case>" -FilePath "/path/to/storageaccounts.csv"
+./scripts/public/test-storageblobs.ps1 -CaseName "<case>" -FilePath "/path/to/storage-blobs.txt"
 ```
 
 ---
 
-#### Changelog
+### Changelog
 
-*Version: 1.0.0*
+#### Version: 1.0.0
 
 - Initial version.

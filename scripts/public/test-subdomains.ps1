@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
-    This script enumerates subdomains for Azure services based on provided base domains and optional permutations.
+    This script enumerates subdomains for Azure services based on provided
+    base domains and optional permutations.
     It resolves DNS names and saves the results in a structured format.
 
 .DESCRIPTION
