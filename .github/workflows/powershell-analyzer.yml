@@ -31,5 +31,5 @@ jobs:
       packages: read
       actions: read
       contents: read
-    uses: dafneb/.github/.github/workflows/powershell-analyzer.yml@3f124afb6b96358a69a6a8e70a1b62904b4da4cb # v1.5.1
+    uses: dafneb/.github/.github/workflows/powershell-analyzer.yml@3c0ec941b8e9e7692e5a8105bd64a488cf164612 # v1.7.0
     secrets: inherit
