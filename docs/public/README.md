@@ -6,6 +6,7 @@ description: Publicly available resources
 
 | Script  | Description  |
 | :--- | :--- |
+| test-domain.ps1 | Tests a domain for possible publicly visible information |
 | test-subdomains.ps1 | Creates list of possible subdomains for a given bases. It's possible also add custom wordlist for permutations. |
 | test-websites.ps1 | Tests a list of websites for accessibility and try to find and extracts Azure Storage Containers' endpoints. |
 | test-storageblobs.ps1 | Tests a list of Azure Storage Blobs for accessibility and extracts information about the storage blob. Including metadata and content. |
@@ -16,7 +17,7 @@ description: Publicly available resources
 
 If you want to use these scripts, you can follow these steps:
 
-*1.* ...
+*1.* Test domain with `test-domain.ps1`.
 
 *2.* Test possible subdomains with `test-subdomains.ps1`.
 

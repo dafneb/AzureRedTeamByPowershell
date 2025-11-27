@@ -1,21 +1,21 @@
 ---
-description: Visible resources in Azure
+description: Get tenant information in Azure
 ---
 
-# get-visibleresources.ps1
+# get-tenantinfo.ps1
 
 ## Description
 
-This script enumerates resources in Azure that are visible to the authenticated
-user. It retrieves information about various Azure resources such as virtual
-machines, storage accounts, key vaults, and more.
-
-The script is going through tenants and subscriptions, collecting information
-about resources.
+This script retrieves tenant information in Azure.
+It enumerates tenants, domains, provides a tree view of the tenant structure, and information about CSPM.
 
 Results could be found at files:
 
-- Resources: "./case/\$CaseName/\$Upn/resources.csv"
+- Tenants: "./case/\$CaseName/\$Upn/tenants.csv"
+- Subscriptions: "./case/\$CaseName/\$Upn/subscriptions.csv"
+- Domains: "./case/\$CaseName/\$Upn/domains.txt"
+- Tree view: "./case/\$CaseName/\$Upn/tree-view.txt"
+- CSPM: "./case/\$CaseName/\$Upn/defender-cspm.csv"
 
 ## Requirements
 
@@ -44,7 +44,7 @@ This parameter is mandatory for all ParameterSets.
 ## Usage
 
 ```powershell
-./scripts/private/get-visibleresources.ps1 -CaseName "<case>"
+./scripts/private/get-tenantinfo.ps1 -CaseName "<case>"
 ```
 
 ---
@@ -54,8 +54,3 @@ This parameter is mandatory for all ParameterSets.
 #### Version: 1.0.0
 
 - Initial version.
-
-#### Version: 1.1.0
-
-- Added support for multiple tenants.
-- Added support for multiple subscriptions.

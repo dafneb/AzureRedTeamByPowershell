@@ -25,15 +25,8 @@
     case and logs the information to a CSV file.
 
 .NOTES
-    Ensure that the Microsoft Az PowerShell module is installed before
-    running the script.
-    The script requires appropriate permissions to access resource data
-    in Azure.
-    The output is saved in a CSV file located in a case-specific folder
-    under the "case" directory.
-
     Author: David Burel (@dafneb)
-    Date: June 16, 2025
+    Date: July 27, 2025
     Version: 1.1.0
 #>
 
@@ -114,7 +107,6 @@ $accountFolderName = $accountFolderName -replace '[\\/:*?"<>|]', '_'
 # Paths for logs (2/2)
 $accountFolderPath = Join-Path -Path $caseFolderPath -ChildPath "$($accountFolderName)"
 $logFilePath = Join-Path -Path $accountFolderPath -ChildPath "resources.csv"
-$domainFilePath = Join-Path -Path $caseFolderPath -ChildPath "domains.txt"
 
 Write-Verbose -Message "Checking folders (2/2) ..."
 
@@ -133,19 +125,10 @@ if (-not (Test-Path -Path $logFilePath)) {
     Clear-Content -Path $logFilePath
 }
 
-if (-not (Test-Path -Path $domainFilePath)) {
-    Write-Verbose -Message "File for domains does not exist, creating it..."
-    New-Item -ItemType File -Path $domainFilePath | Out-Null
-} else {
-    # Clear the domain file if it already exists
-    Clear-Content -Path $domainFilePath
-}
-
 Write-Verbose -Message "Getting data from Azure ..."
 
-# Get list of all visible resources
+# Get list of all visible resources, and Defender CSPM settings
 $dataResources = @()
-$dataDomains = @()
 
 $tenants = Get-AzTenant -ErrorAction SilentlyContinue
 if (-not $tenants) {
@@ -154,9 +137,6 @@ if (-not $tenants) {
 $tenants | ForEach-Object {
     $tenant = $_
     Write-Output "Tenant ID: $($tenant.Id); Tenant Name: $($tenant.Name)"
-    $tenant.Domains | ForEach-Object {
-        $dataDomains += $_
-    }
 
     # Get all subscriptions for the tenant
     $subscriptions = Get-AzSubscription -TenantId $tenant.Id -ErrorAction SilentlyContinue
@@ -165,7 +145,7 @@ $tenants | ForEach-Object {
     }
     $subscriptions | ForEach-Object {
         $subscription = $_
-        Write-Output "Subscription ID: $($subscription.Id); Subscription Name: $($subscription.Name)"
+        Write-Output "Subscription ID: $($subscription.Id); Subscription Name: $($subscription.Name); Subscription State: $($subscription.State)"
 
         # Skip if the subscription is disabled
         if ($subscription.State -eq "Disabled") {
@@ -178,6 +158,7 @@ $tenants | ForEach-Object {
             return
         }
 
+        # Get all resources in the subscription
         $resources = Get-AzResource -ApiVersion '2024-11-01'
         $resources | ForEach-Object {
             $resource = $_
@@ -193,7 +174,7 @@ $tenants | ForEach-Object {
                 ResourceType = "$($resource.ResourceType)";
                 ResourceGroupName = "$($resource.ResourceGroupName)";
                 Location = "$($resource.Location)";
-                Tags = "$($resource.Tags | Out-String)"
+                Tags = "$($resource.Tags | Out-String)";
             }
         }
     }
@@ -202,7 +183,6 @@ $tenants | ForEach-Object {
 # Export the resource details to a CSV file
 Write-Output "Saving data ..."
 $dataResources | Export-Csv -Path $logFilePath -NoTypeInformation -Encoding UTF8
-$dataDomains | Out-File -Path $domainFilePath -Encoding UTF8
 
 # Get actual date and time ...
 $timeEnd = Get-Date

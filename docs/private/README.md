@@ -8,8 +8,9 @@ description: Internal view of resources
 
 | Script  | Description  |
 | --- | --- |
-| get-armconnectionasdevice.ps1 | Connects to Azure Resource Manager with DeviceCode flow. |
 | get-armconnectionasuser.ps1 | Connects to Azure Resource Manager as user. |
+| get-armconnectionasdevice.ps1 | Connects to Azure Resource Manager with DeviceCode flow. |
+| get-armconnectionasservices.ps1 | Connects to Azure Resource Manager as services. |
 
 ## Reconnaissance
 
@@ -23,6 +24,7 @@ description: Internal view of resources
 
 | Script  | Description  |
 | --- | --- |
+| get-tenantinfo.ps1 | Retrieves tenant information in Azure. |
 | get-visibleresources.ps1 | Enumerates visible resources in Azure. |
 | get-rolesassignment.ps1 | Enumerates role assignments in Azure. |
 

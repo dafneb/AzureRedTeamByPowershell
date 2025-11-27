@@ -9,11 +9,13 @@
   * Reconnaissance
     * Entra ID
     * Azure
+      * [get-tenantinfo.ps1](private/get-tenantinfo.md)
       * [get-visibleresources.ps1](private/get-visibleresources.md)
 
 ## Public parts
 
 * [Public](public/README.md)
+  * [test-domain.ps1](public/test-domain.md)
   * [test-subdomains.ps1](public/test-subdomains.md)
   * [test-websites.ps1](public/test-websites.md)
   * [test-storageblobs.ps1](public/test-storageblobs.md)
